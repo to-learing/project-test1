@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "数据大盘",
+  "usingComponents": {
+    "van-icon": "@vant/weapp/icon/index",
+    "van-tag": "@vant/weapp/tag/index",
+    "van-loading": "@vant/weapp/loading/index",
+    "van-empty": "@vant/weapp/empty/index",
+    "van-popup": "@vant/weapp/popup/index",
+    "van-picker": "@vant/weapp/picker/index",
+    "ec-canvas": "../../components/ec-canvas/ec-canvas"
+  }
+}

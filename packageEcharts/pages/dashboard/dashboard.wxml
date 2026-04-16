@@ -1,0 +1,217 @@
+<!-- 数据大盘页面 -->
+<view class="dashboard-page">
+  <!-- Tab切换 -->
+  <view class="tab-bar">
+    <view 
+      wx:for="{{tabs}}" 
+      wx:key="key"
+      class="tab-item {{currentTab === item.key ? 'active' : ''}}"
+      data-tab="{{item.key}}"
+      bindtap="onTabChange"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <!-- 分类筛选 -->
+  <view class="filter-bar" bindtap="showCategoryFilter">
+    <text class="filter-label">{{selectedCategory}}</text>
+    <van-icon name="arrow-down" size="12px" color="#666" />
+  </view>
+
+  <!-- 大盘概览卡片 -->
+  <view class="overview-card">
+    <view class="overview-header">
+      <text class="overview-title">潮流大盘 · 环比上周</text>
+    </view>
+    <view class="overview-content">
+      <view class="overview-left">
+        <view class="trend-row">
+          <van-icon name="{{overview.trendType === 'up' ? 'arrow-up' : (overview.trendType === 'down' ? 'arrow-down' : 'minus')}}" size="20px" color="#fff" />
+          <text class="trend-text">{{overview.trend}}</text>
+        </view>
+        <text class="change-percent {{overview.trendType === 'down' ? 'down' : ''}}">
+          {{overview.trendType === 'up' ? '+' : ''}}{{overview.changePercent}}%
+        </text>
+      </view>
+      <view class="overview-right">
+        <ec-canvas id="mychart-dom-pie" canvas-id="mychart-pie" ec="{{ ec }}"></ec-canvas>
+      </view>
+    </view>
+  </view>
+
+  <!-- 日期信息 -->
+  <view class="date-section">
+    <text class="date-text">{{dateInfo}}</text>
+    <van-icon name="calendar-o" size="18px" color="#999" />
+  </view>
+
+  <!-- 上周数据回顾 -->
+  <view class="stats-card">
+    <view class="card-header">
+      <text class="card-title">上周关键数据回顾</text>
+      <text class="card-link" bindtap="onViewDetail">查看详情</text>
+    </view>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-label">销量</text>
+        <view class="stat-value-row">
+          <text class="stat-value">{{weeklyStats.sales.value}}</text>
+          <text class="stat-change {{weeklyStats.sales.isUp ? 'up' : 'down'}}">
+            {{weeklyStats.sales.isUp ? '↑' : '↓'}}{{weeklyStats.sales.change}}%
+          </text>
+        </view>
+      </view>
+      <view class="stat-item">
+        <text class="stat-label">访问量</text>
+        <view class="stat-value-row">
+          <text class="stat-value">{{weeklyStats.visits.value}}</text>
+          <text class="stat-change {{weeklyStats.visits.isUp ? 'up' : 'down'}}">
+            {{weeklyStats.visits.isUp ? '↑' : '↓'}}{{weeklyStats.visits.change}}%
+          </text>
+        </view>
+      </view>
+      <view class="stat-item">
+        <text class="stat-label">转化率</text>
+        <view class="stat-value-row">
+          <text class="stat-value">{{weeklyStats.conversion.value}}{{weeklyStats.conversion.unit}}</text>
+          <text class="stat-change {{weeklyStats.conversion.isUp ? 'up' : 'down'}}">
+            {{weeklyStats.conversion.isUp ? '↑' : '↓'}}{{weeklyStats.conversion.change}}%
+          </text>
+        </view>
+      </view>
+      <view class="stat-item">
+        <text class="stat-label">客单价</text>
+        <view class="stat-value-row">
+          <text class="stat-value">{{weeklyStats.avgPrice.prefix}}{{weeklyStats.avgPrice.value}}</text>
+          <text class="stat-change {{weeklyStats.avgPrice.isUp ? 'up' : 'down'}}">
+            {{weeklyStats.avgPrice.isUp ? '↑' : '↓'}}{{weeklyStats.avgPrice.change}}%
+          </text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 销量趋势图 -->
+  <view class="chart-card">
+    <view class="card-header">
+      <text class="card-title">销量趋势</text>
+    </view>
+    <view class="chart-container">
+      <ec-canvas id="mychart-dom-pie" canvas-id="mychart-pie" ec="{{ ec }}"></ec-canvas>
+    </view>
+  </view>
+
+  <!-- 本周操作建议 -->
+  <view class="suggestion-card">
+    <view class="card-header">
+      <text class="card-title">本周操作建议</text>
+    </view>
+    
+    <!-- 推荐关注 -->
+    <view class="suggestion-item recommend">
+      <view class="suggestion-icon">
+        <van-icon name="bookmark-o" size="18px" color="#00b3b3" />
+      </view>
+      <view class="suggestion-content">
+        <text class="suggestion-label">推荐关注</text>
+        <text class="suggestion-title">{{suggestions.recommend.title}}</text>
+        <view class="suggestion-tags">
+          <van-tag 
+            wx:for="{{suggestions.recommend.tags}}" 
+            wx:key="*this"
+            plain
+            type="primary"
+            custom-class="suggestion-tag"
+          >{{item}}</van-tag>
+        </view>
+      </view>
+    </view>
+
+    <!-- 风险提示 -->
+    <view class="suggestion-item risk">
+      <view class="suggestion-icon risk-icon">
+        <van-icon name="warning-o" size="18px" color="#ee0a24" />
+      </view>
+      <view class="suggestion-content">
+        <text class="suggestion-label risk-label">风险提示</text>
+        <text class="suggestion-title">{{suggestions.risk.title}}</text>
+        <view class="suggestion-tags">
+          <van-tag 
+            wx:for="{{suggestions.risk.tags}}" 
+            wx:key="*this"
+            plain
+            type="danger"
+            custom-class="suggestion-tag"
+          >{{item}}</van-tag>
+        </view>
+      </view>
+    </view>
+
+    <!-- 查看更多 -->
+    <view class="more-btn" bindtap="onViewMoreSuggestions">
+      <van-icon name="notes-o" size="14px" color="#00b3b3" />
+      <text class="more-text">查看更多建议</text>
+    </view>
+  </view>
+
+  <!-- 热门品类Top5 -->
+  <view class="hot-category-card">
+    <view class="card-header">
+      <text class="card-title">热门品类Top5</text>
+    </view>
+    <view class="category-list">
+      <view 
+        wx:for="{{hotCategories}}" 
+        wx:key="rank"
+        class="category-item"
+        data-category="{{item}}"
+        bindtap="onCategoryTap"
+      >
+        <view class="category-rank rank-{{item.rank}}">{{item.rank}}</view>
+        <view class="category-image">
+          <van-icon name="photo-o" size="40px" color="#ddd" wx:if="{{!item.image}}" />
+          <image wx:else src="{{item.image}}" mode="aspectFill" class="category-img" />
+        </view>
+        <text class="category-name">{{item.name}}</text>
+        <text class="category-change {{item.isUp ? 'up' : 'down'}}">
+          {{item.isUp ? '+' : '-'}}{{item.change}}%
+        </text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分类选择弹窗 -->
+  <van-popup 
+    show="{{showCategoryPicker}}" 
+    position="bottom"
+    round
+    bind:close="hideCategoryFilter"
+  >
+    <view class="category-picker">
+      <view class="picker-header">
+        <text class="picker-title">选择品类</text>
+        <van-icon name="cross" size="20px" bindtap="hideCategoryFilter" />
+      </view>
+      <view class="picker-content">
+        <view 
+          wx:for="{{categories}}" 
+          wx:key="value"
+          class="picker-item {{selectedCategoryValue === item.value ? 'active' : ''}}"
+          data-category="{{item}}"
+          bindtap="onCategorySelect"
+        >
+          <text>{{item.text}}</text>
+          <van-icon wx:if="{{selectedCategoryValue === item.value}}" name="success" size="16px" color="#00b3b3" />
+        </view>
+      </view>
+    </view>
+  </van-popup>
+
+  <!-- 加载状态 -->
+  <van-overlay show="{{loading}}">
+    <view class="loading-wrapper">
+      <van-loading type="spinner" color="#00b3b3" />
+    </view>
+  </van-overlay>
+</view>

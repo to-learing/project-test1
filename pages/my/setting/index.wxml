@@ -1,0 +1,21 @@
+<view class="page-container">
+  <view class="setting-group">
+    <t-cell-group theme="card">
+      <t-cell title="账号安全" hover arrow />
+      <t-cell title="消息通知" hover arrow />
+      <t-cell title="隐私设置" hover arrow />
+    </t-cell-group>
+  </view>
+
+  <view class="setting-group">
+    <t-cell-group theme="card">
+      <t-cell title="清理缓存" hover arrow />
+      <t-cell title="关于我们" hover arrow />
+      <t-cell title="检查更新" hover arrow note="v1.0.0" />
+    </t-cell-group>
+  </view>
+
+  <view wx:if="{{isLoggedIn}}" class="logout-btn">
+    <t-button theme="light" block size="large" bind:tap="handleLogout">退出登录</t-button>
+  </view>
+</view>

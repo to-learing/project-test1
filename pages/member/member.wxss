@@ -1,0 +1,221 @@
+/* 会员中心页样式 */
+
+.page-container {
+  min-height: 100vh;
+  background-color: var(--bg-secondary);
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+}
+
+/* 头部 */
+.member-header {
+  position: relative;
+  padding: 48rpx 24rpx;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 280rpx;
+  background: linear-gradient(135deg, #1a1a1a, #333);
+}
+
+.header-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.member-icon {
+  width: 120rpx;
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #333, #1a1a1a);
+  border-radius: 50%;
+  border: 4rpx solid #FFD700;
+}
+
+.member-info {
+  text-align: center;
+}
+
+.member-title {
+  display: block;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: #FFD700;
+  margin-bottom: 8rpx;
+}
+
+.member-expire {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* 会员权益 */
+.benefits-section {
+  margin: 24rpx;
+  padding: 24rpx;
+  background-color: var(--bg-color-container);
+  border-radius: var(--radius-lg);
+}
+
+.section-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-color-primary);
+  margin-bottom: 20rpx;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16rpx;
+}
+
+.benefit-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx;
+}
+
+.benefit-item text {
+  font-size: var(--font-size-sm);
+  color: var(--text-color-secondary);
+}
+
+/* 套餐选择 */
+.packages-section {
+  margin: 24rpx;
+  padding: 24rpx;
+  background-color: var(--bg-color-container);
+  border-radius: var(--radius-lg);
+}
+
+.packages-list {
+  display: flex;
+  gap: 16rpx;
+}
+
+.package-item {
+  flex: 1;
+  position: relative;
+  padding: 24rpx 16rpx;
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 2rpx solid var(--component-border);
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.package-item.selected {
+  border-color: #FFD700;
+  background-color: rgba(255, 215, 0, 0.05);
+}
+
+.package-tag {
+  position: absolute;
+  top: -10rpx;
+  right: -10rpx;
+  padding: 4rpx 16rpx;
+  background: linear-gradient(135deg, #FF6B6B, #EE0A24);
+  border-radius: var(--radius-round);
+  font-size: var(--font-size-xs);
+  color: var(--text-color-white);
+}
+
+.package-name {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  color: var(--text-color-primary);
+  margin-bottom: 12rpx;
+}
+
+.package-price {
+  margin-bottom: 8rpx;
+}
+
+.price-current {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--brand-color);
+}
+
+.price-original {
+  font-size: var(--font-size-xs);
+  color: var(--text-color-placeholder);
+  text-decoration: line-through;
+  margin-left: 8rpx;
+}
+
+.package-days {
+  font-size: var(--font-size-xs);
+  color: var(--text-color-secondary);
+}
+
+.package-check {
+  position: absolute;
+  bottom: 8rpx;
+  right: 8rpx;
+}
+
+/* 套餐权益详情 */
+.package-benefits {
+  margin: 24rpx;
+  padding: 24rpx;
+  background-color: var(--bg-color-container);
+  border-radius: var(--radius-lg);
+}
+
+.benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.benefit-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: var(--font-size-md);
+  color: var(--text-color-primary);
+}
+
+/* 底部按钮 */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 24rpx;
+  background-color: var(--bg-color-container);
+  border-top: 1rpx solid var(--component-border);
+}
+
+.price-info {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+}
+
+.price-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-color-secondary);
+}
+
+.price-value {
+  font-size: var(--font-size-xxl);
+  font-weight: 700;
+  color: var(--brand-color);
+}

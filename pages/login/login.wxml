@@ -1,0 +1,28 @@
+<!-- 登录页：仅保留微信快捷登录按钮 -->
+<view class="page-container">
+  <view class="header">
+    <image class="logo" src="/images/logo.png" mode="aspectFit" />
+    <text class="title">极光密码</text>
+    <text class="subtitle">微信快捷登录，立刻体验</text>
+  </view>
+
+  <view class="login-section">
+    <van-button
+      type="primary"
+      round
+      block
+      size="large"
+      loading="{{loading}}"
+      disabled="{{loading}}"
+      custom-class="wechat-login-btn"
+      bind:click="onWechatLogin"
+    >
+      <van-icon name="wechat" class="btn-icon" />
+      微信快捷登录
+    </van-button>
+  </view>
+
+  <view class="footer">
+    <text class="footer-text">后端未就绪时自动进入体验模式</text>
+  </view>
+</view>

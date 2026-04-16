@@ -1,0 +1,330 @@
+.page-container {
+  min-height: 100vh;
+  background-color: #F7F8FA;
+  padding-bottom: 200rpx;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+}
+
+/* Header VIP Card */
+.header-section {
+  background-color: #1A1A1A;
+  padding: 40rpx 30rpx 100rpx;
+  border-bottom-left-radius: 40rpx;
+  border-bottom-right-radius: 40rpx;
+}
+
+.vip-card {
+  position: relative;
+  height: 320rpx;
+  background: linear-gradient(135deg, #FFEFD3 0%, #D4A86A 100%);
+  border-radius: 30rpx;
+  padding: 40rpx;
+  box-sizing: border-box;
+  overflow: hidden;
+  box-shadow: 0 16rpx 40rpx rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-bg {
+  position: absolute;
+  top: -60rpx;
+  right: -60rpx;
+  width: 320rpx;
+  height: 320rpx;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+
+.avatar-wrap {
+  position: relative;
+  width: 96rpx;
+  height: 96rpx;
+  margin-right: 24rpx;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255, 255, 255, 0.4);
+}
+
+.vip-badge {
+  position: absolute;
+  bottom: -4rpx;
+  right: -4rpx;
+  background: #333;
+  color: #F3D19E;
+  font-size: 20rpx;
+  font-weight: bold;
+  font-style: italic;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx solid #F3D19E;
+}
+
+.info-content {
+  flex: 1;
+}
+
+.nickname {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.expire-time {
+  font-size: 24rpx;
+  color: rgba(51, 51, 51, 0.7);
+}
+
+.slogan-wrap {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  z-index: 1;
+}
+
+.slogan {
+  font-size: 28rpx;
+  color: #4A3921;
+  font-weight: 500;
+}
+
+.btn-renew {
+  background: #333;
+  color: #FFEFD3;
+  font-size: 24rpx;
+  padding: 12rpx 30rpx;
+  border-radius: 40rpx;
+  font-weight: 500;
+}
+
+/* 通用 section 样式 */
+.section-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.title-text {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.title-sub {
+  font-size: 24rpx;
+  color: #999;
+  margin-left: 16rpx;
+}
+
+/* 套餐选择区 */
+.package-section {
+  padding: 0 30rpx;
+  margin-top: -60rpx;
+  position: relative;
+  z-index: 10;
+}
+
+.package-list {
+  display: flex;
+  justify-content: space-between;
+}
+
+.package-item {
+  width: 31%;
+  background: #FFF;
+  border-radius: 20rpx;
+  padding: 40rpx 0 30rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  border: 2rpx solid transparent;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.03);
+  transition: all 0.3s;
+}
+
+.package-item.active {
+  background: #FFFBF2;
+  border-color: #D4A86A;
+}
+
+.package-item.active .item-name {
+  color: #D4A86A;
+}
+
+.item-tag {
+  position: absolute;
+  top: -16rpx;
+  left: -2rpx;
+  background: linear-gradient(90deg, #FF6B6B 0%, #FF4B4B 100%);
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 16rpx 0 16rpx 0;
+  font-weight: bold;
+}
+
+.active .item-tag {
+  background: linear-gradient(90deg, #D4A86A 0%, #B88544 100%);
+}
+
+.item-name {
+  font-size: 28rpx;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 20rpx;
+}
+
+.item-price {
+  color: #D4A86A;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-bottom: 10rpx;
+}
+
+.active .item-price {
+  color: #E63D3D;
+}
+
+.symbol {
+  font-size: 24rpx;
+  font-weight: bold;
+}
+
+.price {
+  font-size: 48rpx;
+  font-weight: bold;
+}
+
+.item-origin-price {
+  font-size: 22rpx;
+  color: #999;
+  text-decoration: line-through;
+  height: 30rpx; /* 占位防止跳动 */
+}
+
+/* 特权区 */
+.privilege-section {
+  margin: 40rpx 30rpx;
+  background: #FFF;
+  border-radius: 30rpx;
+  padding: 40rpx 30rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.03);
+}
+
+.privilege-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.privilege-item {
+  width: 33.33%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40rpx;
+}
+
+.icon-wrap {
+  width: 96rpx;
+  height: 96rpx;
+  background: #FAFAFA;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+
+.privilege-name {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 10rpx;
+}
+
+.privilege-desc {
+  font-size: 22rpx;
+  color: #999;
+}
+
+/* 底部操作区 */
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 120rpx;
+  background: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40rpx;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -4rpx 20rpx rgba(0,0,0,0.05);
+  z-index: 100;
+}
+
+.price-info {
+  display: flex;
+  align-items: baseline;
+}
+
+.total-label {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.total-symbol {
+  font-size: 24rpx;
+  color: #E63D3D;
+  font-weight: bold;
+  margin-right: 4rpx;
+}
+
+.total-price {
+  font-size: 44rpx;
+  color: #E63D3D;
+  font-weight: bold;
+  margin-right: 16rpx;
+}
+
+.total-origin {
+  font-size: 24rpx;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.pay-btn {
+  background: linear-gradient(90deg, #EAD0A5 0%, #D4A86A 100%);
+  color: #fff;
+  height: 80rpx;
+  line-height: 80rpx;
+  padding: 0 60rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  box-shadow: 0 8rpx 16rpx rgba(212, 168, 106, 0.3);
+}
+
+.pay-btn:active {
+  opacity: 0.9;
+}

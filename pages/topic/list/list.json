@@ -1,0 +1,14 @@
+{
+  "usingComponents": {
+    "t-search": "tdesign-miniprogram/search/search",
+    "t-fab": "tdesign-miniprogram/fab/fab",
+    "t-icon": "tdesign-miniprogram/icon/icon",
+    "t-image": "tdesign-miniprogram/image/image",
+    "t-avatar": "tdesign-miniprogram/avatar/avatar",
+    "t-tag": "tdesign-miniprogram/tag/tag",
+    "t-tabs": "tdesign-miniprogram/tabs/tabs",
+    "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel"
+  },
+  "navigationBarTitleText": "话题广场",
+  "enablePullDownRefresh": true
+}

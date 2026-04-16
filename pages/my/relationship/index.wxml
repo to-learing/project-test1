@@ -1,0 +1,20 @@
+<view class="page-container">
+  <t-cell-group theme="card">
+    <block wx:if="{{list.length > 0}}">
+      <t-cell wx:for="{{list}}" wx:key="id" title="{{item.nickName}}" description="{{item.bio}}" hover bindtap="handleToUser" data-id="{{item.id}}">
+         <view slot="left-icon" class="avatar-wrap">
+             <t-avatar image="{{item.avatar}}" size="small" icon="user" />
+         </view>
+         <view slot="note">
+            <view class="btn-follow {{item.followed ? 'followed' : ''}}" catchtap="handleToggleFollow" data-id="{{item.id}}" data-index="{{index}}">{{item.followed ? '已关注' : '关注'}}</view>
+         </view>
+      </t-cell>
+    </block>
+    <view wx:else class="empty-tip">
+       暂无{{type === 'following' ? '关注' : '粉丝'}}
+    </view>
+  </t-cell-group>
+  
+  <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
+  <view wx:if="{{!hasMore && list.length > 0}}" class="no-more-tip">没有更多了</view>
+</view>

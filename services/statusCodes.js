@@ -1,0 +1,106 @@
+/**
+ * HTTP和业务状态码管理模块
+ */
+
+// HTTP状态码
+const HTTP_STATUS = {
+  SUCCESS: 200,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  METHOD_NOT_ALLOWED: 405,
+  REQUEST_TIMEOUT: 408,
+  SERVER_ERROR: 500,
+  BAD_GATEWAY: 502,
+  SERVICE_UNAVAILABLE: 503,
+  GATEWAY_TIMEOUT: 504
+};
+
+// 业务状态码
+const BUSINESS_STATUS = {
+  SUCCESS: 200,
+  TOKEN_EXPIRED: 2001,  // 登录已过期，请重新登录
+  TOKEN_INVALID: 2002,  // 无效的登录凭证
+  LOGIN_FAILED: 2003,
+  WECHAT_LOGIN_FAILED: 2004,
+  PARAM_ERROR: 1001,
+  USER_NOT_FOUND: 1002,
+  USER_DISABLED: 1003,
+  MEMBER_REQUIRED: 3001,
+  MEMBER_EXPIRED: 3002,
+  ORDER_NOT_FOUND: 3003,
+  ORDER_PAID: 3004,
+  ARTICLE_NOT_FOUND: 4001,
+  TOPIC_NOT_FOUND: 4002,
+  COMMENT_NOT_FOUND: 4003,
+  ALREADY_LIKED: 4004,
+  NOT_LIKED: 4005,
+  FILE_TYPE_NOT_ALLOWED: 5001,
+  FILE_SIZE_EXCEEDED: 5002,
+  FILE_UPLOAD_FAILED: 5003
+};
+
+// HTTP错误信息映射
+const HTTP_ERROR_MESSAGES = {
+  [HTTP_STATUS.BAD_REQUEST]: '请求参数错误',
+  [HTTP_STATUS.UNAUTHORIZED]: '未授权，请重新登录',
+  [HTTP_STATUS.FORBIDDEN]: '拒绝访问',
+  [HTTP_STATUS.NOT_FOUND]: '请求资源不存在',
+  [HTTP_STATUS.METHOD_NOT_ALLOWED]: '请求方法不允许',
+  [HTTP_STATUS.REQUEST_TIMEOUT]: '请求超时',
+  [HTTP_STATUS.SERVER_ERROR]: '服务器内部错误',
+  [HTTP_STATUS.BAD_GATEWAY]: '网关错误',
+  [HTTP_STATUS.SERVICE_UNAVAILABLE]: '服务不可用',
+  [HTTP_STATUS.GATEWAY_TIMEOUT]: '网关超时'
+};
+
+// 业务错误信息映射
+const BUSINESS_ERROR_MESSAGES = {
+  [BUSINESS_STATUS.TOKEN_EXPIRED]: '登录已过期，请重新登录',
+  [BUSINESS_STATUS.TOKEN_INVALID]: '无效的登录凭证',
+  [BUSINESS_STATUS.LOGIN_FAILED]: '登录失败',
+  [BUSINESS_STATUS.WECHAT_LOGIN_FAILED]: '微信登录失败',
+  [BUSINESS_STATUS.PARAM_ERROR]: '参数校验失败',
+  [BUSINESS_STATUS.USER_NOT_FOUND]: '用户不存在',
+  [BUSINESS_STATUS.USER_DISABLED]: '用户已被禁用',
+  [BUSINESS_STATUS.MEMBER_REQUIRED]: '该内容仅会员可查看',
+  [BUSINESS_STATUS.MEMBER_EXPIRED]: '会员已过期',
+  [BUSINESS_STATUS.ORDER_NOT_FOUND]: '订单不存在',
+  [BUSINESS_STATUS.ORDER_PAID]: '订单已支付',
+  [BUSINESS_STATUS.ARTICLE_NOT_FOUND]: '文章不存在',
+  [BUSINESS_STATUS.TOPIC_NOT_FOUND]: '话题不存在',
+  [BUSINESS_STATUS.COMMENT_NOT_FOUND]: '评论不存在',
+  [BUSINESS_STATUS.ALREADY_LIKED]: '已经点赞过了',
+  [BUSINESS_STATUS.NOT_LIKED]: '还未点赞',
+  [BUSINESS_STATUS.FILE_TYPE_NOT_ALLOWED]: '不支持的文件类型',
+  [BUSINESS_STATUS.FILE_SIZE_EXCEEDED]: '文件大小超出限制',
+  [BUSINESS_STATUS.FILE_UPLOAD_FAILED]: '文件上传失败'
+};
+
+/**
+ * 获取HTTP错误信息
+ * @param {Number} statusCode HTTP状态码
+ * @returns {String} 错误信息
+ */
+function getHttpErrorMessage(statusCode) {
+  return HTTP_ERROR_MESSAGES[statusCode] || `请求失败(${statusCode})`;
+}
+
+/**
+ * 获取业务错误信息
+ * @param {Number} code 业务状态码
+ * @returns {String} 错误信息
+ */
+function getBusinessErrorMessage(code) {
+  return BUSINESS_ERROR_MESSAGES[code] || '未知错误';
+}
+
+module.exports = {
+  HTTP_STATUS,
+  BUSINESS_STATUS,
+  HTTP_ERROR_MESSAGES,
+  BUSINESS_ERROR_MESSAGES,
+  getHttpErrorMessage,
+  getBusinessErrorMessage
+};

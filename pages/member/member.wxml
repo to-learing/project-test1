@@ -1,0 +1,110 @@
+<!--
+  会员中心页
+-->
+<view class="page-container">
+  <!-- 会员状态卡片 -->
+  <view class="member-header">
+    <view class="header-bg"></view>
+    <view class="header-content">
+      <view class="member-icon">
+        <van-icon name="vip-card" size="48px" color="#FFD700" />
+      </view>
+      <view wx:if="{{isMember}}" class="member-info">
+        <text class="member-title">{{memberLevelName}}</text>
+        <text class="member-expire">有效期至 {{memberExpireTime}}</text>
+      </view>
+      <view wx:else class="member-info">
+        <text class="member-title">开通会员</text>
+        <text class="member-expire">解锁全部资讯阅读权限</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 会员权益 -->
+  <view class="benefits-section">
+    <view class="section-title">会员权益</view>
+    <view class="benefits-grid">
+      <view class="benefit-item">
+        <van-icon name="description" size="28px" color="#FFD700" />
+        <text>全文阅读</text>
+      </view>
+      <view class="benefit-item">
+        <van-icon name="chart-trending-o" size="28px" color="#FFD700" />
+        <text>行业数据</text>
+      </view>
+      <view class="benefit-item">
+        <van-icon name="chat-o" size="28px" color="#FFD700" />
+        <text>话题互动</text>
+      </view>
+      <view class="benefit-item">
+        <van-icon name="service-o" size="28px" color="#FFD700" />
+        <text>专属客服</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <van-skeleton wx:if="{{loading}}" title row="3" loading="{{loading}}" />
+
+  <!-- 套餐选择 -->
+  <view wx:else class="packages-section">
+    <view class="section-title">选择套餐</view>
+    <view class="packages-list">
+      <view
+        wx:for="{{packages}}"
+        wx:key="id"
+        class="package-item {{selectedPackageId === item.id ? 'selected' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onSelectPackage"
+      >
+        <view class="package-tag" wx:if="{{item.tag}}">{{item.tag}}</view>
+        <view class="package-name">{{item.name}}</view>
+        <view class="package-price">
+          <text class="price-current">{{item.currentPriceFormatted}}</text>
+          <text class="price-original" wx:if="{{item.originalPrice > item.currentPrice}}">
+            {{item.originalPriceFormatted}}
+          </text>
+        </view>
+        <view class="package-days">{{item.validDays}}天</view>
+        <view class="package-check" wx:if="{{selectedPackageId === item.id}}">
+          <van-icon name="success" size="20px" color="#FFD700" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 套餐权益详情 -->
+  <view class="package-benefits" wx:if="{{selectedPackageId && selectedPackage && selectedPackage.benefits}}">
+    <view class="section-title">套餐包含</view>
+    <view class="benefits-list">
+      <view
+        wx:for="{{selectedPackage.benefits}}"
+        wx:for-item="benefit"
+        wx:key="*this"
+        class="benefit-row"
+      >
+        <van-icon name="checked" size="16px" color="#07C160" />
+        <text>{{benefit}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="bottom-bar safe-area-bottom">
+    <view class="price-info" wx:if="{{selectedPackageId}}">
+      <text class="price-label">应付：</text>
+      <text class="price-value">
+        {{selectedPackagePrice}}
+      </text>
+    </view>
+    <van-button
+      type="warning"
+      round
+      loading="{{submitting}}"
+      disabled="{{!selectedPackageId || submitting}}"
+      bindtap="onSubmit"
+    >
+      立即开通
+    </van-button>
+  </view>
+</view>

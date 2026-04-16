@@ -1,0 +1,62 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/article/list/list",
+    "pages/article/detail/detail",
+    "pages/topic/list/list",
+    "pages/topic/detail/detail",
+    "pages/topic/create/create",
+    "pages/my/index",
+    "pages/my/member/index",
+    "pages/my/setting/index",
+    "pages/my/profile-edit/index",
+    "pages/my/topic/index",
+    "pages/my/relationship/index",
+    "pages/profile/profile",
+    "pages/member/member",
+    "pages/login/login"
+  ],
+  "subPackages": [
+    {
+      "root": "packageEcharts",
+      "pages": [
+        "pages/dashboard/dashboard"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTitleText": "极光密码",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F5F5F5",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#000000",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "images/tabbar/home.png",
+        "selectedIconPath": "images/tabbar/home-active.png"
+      },
+      {
+        "pagePath": "pages/topic/list/list",
+        "text": "话题中心",
+        "iconPath": "images/tabbar/topic.png",
+        "selectedIconPath": "images/tabbar/topic-active.png"
+      },
+      {
+        "pagePath": "pages/my/index",
+        "text": "我的",
+        "iconPath": "images/tabbar/profile.png",
+        "selectedIconPath": "images/tabbar/profile-active.png"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

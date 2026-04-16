@@ -1,0 +1,62 @@
+<!--
+  个人中心页
+-->
+<view class="page-container">
+  <!-- 用户信息卡片 -->
+  <view class="user-card">
+    <!-- 未登录状态 -->
+    <view wx:if="{{!isLoggedIn}}" class="not-login" bindtap="goToLogin">
+      <image class="default-avatar" src="/images/default-avatar.png" mode="aspectFill" />
+      <view class="login-tip">
+        <text class="login-text">点击登录</text>
+        <text class="login-desc">登录后享受更多服务</text>
+      </view>
+      <van-icon name="arrow" size="16px" color="#999" />
+    </view>
+
+    <!-- 已登录状态 -->
+    <view wx:else class="logged-in">
+      <image class="user-avatar" src="{{userInfo.avatar || '/images/default-avatar.png'}}" mode="aspectFill" />
+      <view class="user-info">
+        <view class="user-name">{{userInfo.nickname || '用户'}}</view>
+        <view class="member-status" bindtap="goToMember">
+          <van-tag wx:if="{{isMember}}" type="warning">{{memberLevelName}}</van-tag>
+          <van-tag wx:else plain>开通会员</van-tag>
+          <text wx:if="{{memberExpireTime}}" class="expire-time">{{memberExpireTime}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 会员卡片 -->
+  <view class="member-card" bindtap="goToMember">
+    <view class="member-left">
+      <van-icon name="vip-card" size="24px" color="#FFD700" />
+      <view class="member-info">
+        <text class="member-title">{{isMember ? '我的会员' : '开通会员'}}</text>
+        <text class="member-desc">{{isMember ? '畅享全部内容' : '解锁全部资讯阅读权限'}}</text>
+      </view>
+    </view>
+    <van-icon name="arrow" size="16px" color="#999" />
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <van-cell-group>
+      <van-cell
+        wx:for="{{menus}}"
+        wx:key="title"
+        title="{{item.title}}"
+        icon="{{item.icon}}"
+        is-link
+        data-url="{{item.url}}"
+        bind:click="onMenuClick"
+      />
+    </van-cell-group>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-section" wx:if="{{isLoggedIn}}">
+    <van-button plain type="default" block bindtap="onLogout">退出登录</van-button>
+  </view>
+</view>

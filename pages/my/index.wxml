@@ -1,0 +1,71 @@
+<view class="page-container custom-page">
+  <!-- 顶部个人信息区域 -->
+  <view class="user-header" style="padding-top: {{statusBarHeight}}px;">
+    <view class="user-info-box" bindtap="handleToLogin">
+      <view class="avatar-box">
+        <t-avatar image="{{userInfo.avatarUrl || ''}}" icon="user" size="large" />
+      </view>
+      <view class="info-content">
+        <view class="nickname-row">
+          <text class="nickname">{{userInfo.nickName || '点击登录'}}</text>
+          <view wx:if="{{userInfo.isMember}}" class="member-tag">
+            <t-icon name="diamond" size="24rpx" color="#fff" />
+            <text>尊享会员</text>
+          </view>
+        </view>
+        <text class="bio text-ellipsis">{{userInfo.bio || '登录后查看个人主页'}}</text>
+      </view>
+      <view class="setting-btn" catchtap="handleToSettings">
+        <t-icon name="setting" size="48rpx" color="#fff" />
+      </view>
+    </view>
+
+    <!-- 数据统计栏 -->
+    <view class="status-row">
+      <view class="status-item" bindtap="handleNav" data-url="/pages/my/relationship/index?type=following">
+        <text class="num">{{userInfo.followingCount || 0}}</text>
+        <text class="label">关注</text>
+      </view>
+      <view class="status-item" bindtap="handleNav" data-url="/pages/my/relationship/index?type=followers">
+        <text class="num">{{userInfo.followerCount || 0}}</text>
+        <text class="label">粉丝</text>
+      </view>
+      <view class="status-item" bindtap="handleNav" data-url="/pages/my/topics">
+        <text class="num">{{userInfo.topicCount || 0}}</text>
+        <text class="label">话题</text>
+      </view>
+      <view class="status-item">
+        <text class="num">{{userInfo.likeCount || 0}}</text>
+        <text class="label">获赞</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 会员卡片 (悬浮) -->
+  <view class="member-card-wrapper">
+    <view class="member-card" bindtap="handleToMember">
+      <view class="card-left">
+        <t-icon name="diamond" size="40rpx" color="#F7D9AA" />
+        <view class="card-text">
+          <text class="title">会员中心</text>
+          <text class="desc">开通会员，解锁专属权益</text>
+        </view>
+      </view>
+      <view class="card-btn">立即查看</view>
+    </view>
+  </view>
+
+  <!-- 功能菜单列表 -->
+  <view class="menu-list">
+    <t-cell-group theme="card">
+      <t-cell title="我的话题" left-icon="chat" hover arrow bindtap="handleNav" data-url="/pages/my/topic/index" />
+      <t-cell title="我的收藏" left-icon="heart" hover arrow bindtap="handleTodo" data-name="我的收藏" />
+      <t-cell title="浏览历史" left-icon="time" hover arrow bindtap="handleTodo" data-name="浏览历史" />
+    </t-cell-group>
+
+    <t-cell-group theme="card" class="mt-md">
+      <t-cell title="个人资料" left-icon="user" hover arrow bindtap="handleToProfile" />
+      <t-cell title="关于我们" left-icon="info-circle" hover arrow />
+    </t-cell-group>
+  </view>
+</view>

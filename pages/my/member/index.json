@@ -1,0 +1,11 @@
+{
+  "usingComponents": {
+    "t-icon": "tdesign-miniprogram/icon/icon",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-row": "tdesign-miniprogram/row/row",
+    "t-col": "tdesign-miniprogram/col/col"
+  },
+  "navigationBarTitleText": "会员中心",
+  "navigationBarBackgroundColor": "#1A1A1A",
+  "navigationBarTextStyle": "white"
+}

@@ -1,0 +1,82 @@
+<view class="create-container">
+  <!-- 内容编辑区域 -->
+  <view class="content-area">
+    <view class="input-group">
+      <input class="title-input" placeholder="填写标题会有更多赞哦~" value="{{title}}" bindinput="onTitleInput" maxlength="100" />
+    </view>
+    <view class="editor-wrapper">
+      <textarea 
+        class="content-textarea"
+        placeholder="请输入文字" 
+        placeholder-class="text-placeholder"
+        value="{{content}}" 
+        bindinput="onContentInput"
+        bindfocus="onTextareaFocus"
+        bindblur="onTextareaBlur"
+        auto-height
+        show-confirm-bar="{{false}}"
+        adjust-position="{{!showTopicPanel}}"
+        cursor-spacing="{{showTopicPanel ? 320 : 100}}"
+        focus="{{textareaFocus}}"
+      />
+    </view>
+    <!-- 图片上传区域 -->
+    <view class="upload-wrapper">
+    <t-upload draggable media-type="{{['video','image']}}" files="{{fileList}}" removeBtn="{{false}}" bind:success="handleSuccess" bind:remove="handleRemove" bind:click="handleClick" bind:drop="handleDrop" />
+    <view class="upload-tip">图片上传功能暂未开放，图片将使用示例图片</view>
+  </view>
+
+    <!-- 已选话题标签展示 -->
+    <view class="selected-topics" wx:if="{{selectedTopics.length > 0}}">
+      <view class="topic-tag" wx:for="{{selectedTopics}}" wx:key="uniqueId">
+        <text class="topic-tag-text">#{{item.name}}</text>
+        <view class="topic-tag-close" bind:tap="removeSelectedTopic" data-uniqueid="{{item.uniqueId}}">
+          <t-icon name="close" size="20rpx" color="#00b3b3" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 话题选择面板 - 显示在键盘上方 -->
+  <view class="topic-panel" wx:if="{{showTopicPanel}}">
+    <scroll-view class="topic-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+      <!-- 创建新话题选项 -->
+      <view class="topic-item create-new" wx:if="{{topicSearchKey && !hasMatchingTopic}}" bind:tap="createNewTopic">
+        <view class="topic-item-left">
+          <text class="topic-item-name">#{{topicSearchKey}}</text>
+        </view>
+        <text class="create-new-label">创建新话题</text>
+      </view>
+      
+      <!-- 话题列表 -->
+      <view 
+        class="topic-item" 
+        wx:for="{{filteredTopicList}}" 
+        wx:key="id"
+        bind:tap="selectTopic"
+        data-topic="{{item}}"
+      >
+        <text class="topic-item-name">#{{item.name}}</text>
+        <text class="topic-item-count">{{item.count}}讨论</text>
+      </view>
+
+      <!-- 空状态 -->
+      <view class="topic-empty" wx:if="{{filteredTopicList.length === 0 && !topicSearchKey}}">
+        <text>暂无话题</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 工具栏 -->
+  <view class="toolbar">
+    <view class="tool-item {{showTopicPanel ? 'active' : ''}}" bind:tap="toggleTopicPanel">
+      <text class="tool-hash">#</text>
+    </view>
+    <view class="tool-item">
+      <t-icon name="image" size="44rpx" />
+    </view>
+    <view class="toolbar-right">
+      <t-button theme="primary" size="small" bind:tap="submitTopic">发布</t-button>
+    </view>
+  </view>
+</view>

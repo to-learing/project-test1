@@ -1,0 +1,70 @@
+<!-- 首页模块导航 -->
+<view class="page-container">
+  <!-- 背景装饰光晕 -->
+  <view class="bg-decoration top-right"></view>
+  <view class="bg-decoration bottom-left"></view>
+
+  <view class="content-wrapper">
+    <!-- 顶部导航区 -->
+    <view class="header">
+      <view class="header-left">
+        <text class="app-title">极光密码</text>
+        <view class="app-tag">PRO</view>
+      </view>
+      <text class="app-subtitle">洞察行业数据，发现生意机会</text>
+    </view>
+
+    <!-- 核心功能区 -->
+    <view class="section-title">核心看板</view>
+    
+    <!-- 首个大卡片：数据大盘 -->
+    <view 
+      class="hero-card"
+      bindtap="onModuleTap"
+      data-path="{{modules[0].path}}"
+      hover-class="hero-hover"
+      hover-stay-time="70"
+    >
+      <view class="hero-content">
+        <view class="hero-badge">DATA V</view>
+        <text class="hero-card-title">{{modules[0].title}}</text>
+        <text class="hero-card-desc">{{modules[0].desc}}</text>
+        <view class="hero-btn">
+          <text>立即探索</text>
+          <van-icon name="arrow" size="14px" />
+        </view>
+      </view>
+      <view class="hero-visual">
+         <!-- 装饰性大图标 -->
+         <van-icon name="{{modules[0].icon}}" size="120px" color="rgba(255,255,255,0.15)" />
+      </view>
+    </view>
+
+    <!-- 功能列表 -->
+    <view class="section-title">更多服务</view>
+    <view class="module-list">
+      <block wx:for="{{modules}}" wx:key="key">
+        <view 
+          wx:if="{{index > 0}}"
+          class="module-card"
+          bindtap="onModuleTap"
+          data-path="{{item.path}}"
+          hover-class="card-hover"
+          hover-stay-time="70"
+        > 
+          <view class="module-card-content">
+            <text class="module-title">{{item.title}}</text>
+            <text class="module-desc">{{item.desc}}</text>
+            <view class="module-action">
+              <text>进入</text>
+              <van-icon name="arrow" color="var(--brand-color)" size="12px" />
+            </view>
+          </view>
+          <view class="module-card-icon-wrapper">
+             <van-icon name="{{item.icon}}" size="32px" color="{{item.color}}" />
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

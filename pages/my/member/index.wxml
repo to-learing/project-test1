@@ -1,0 +1,80 @@
+<view class="page-container">
+  <!-- 头部卡片区域 -->
+  <view class="header-section">
+    <view class="vip-card">
+      <view class="card-bg"></view>
+      <view class="user-info">
+        <view class="avatar-wrap">
+          <image class="avatar" src="{{userInfo.avatarUrl || 'https://tdesign.gtimg.com/miniprogram/images/avatar1.png'}}" mode="aspectFill" />
+          <view class="vip-badge" wx:if="{{isMember}}">V</view>
+        </view>
+        <view class="info-content">
+          <view class="nickname">{{userInfo.nickName || '微信用户'}}</view>
+          <view class="expire-time" wx:if="{{isMember}}">尊享会员 · 有效期至 2026.12.31</view>
+          <view class="expire-time" wx:else>开通会员，解锁专享特权</view>
+        </view>
+      </view>
+      
+      <view class="slogan-wrap">
+        <view class="slogan">畅享全站精选优质内容</view>
+        <view class="btn-renew" wx:if="{{isMember}}">立即续费</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 会员套餐选择 -->
+  <view class="package-section">
+    <view class="section-title">
+      <text class="title-text">开通套餐</text>
+      <text class="title-sub">多买多优惠</text>
+    </view>
+    <view class="package-list">
+      <view 
+        wx:for="{{packages}}" 
+        wx:key="id"
+        class="package-item {{currentPackageId === item.id ? 'active' : ''}}"
+        bindtap="selectPackage"
+        data-id="{{item.id}}"
+      >
+        <view class="item-tag" wx:if="{{item.tag}}">{{item.tag}}</view>
+        <view class="item-name">{{item.name}}</view>
+        <view class="item-price">
+          <text class="symbol">¥</text>
+          <text class="price">{{item.currentPrice}}</text>
+        </view>
+        <view class="item-origin-price" wx:if="{{item.originalPrice !== item.currentPrice}}">¥{{item.originalPrice}}</view>
+        <view class="item-origin-price" wx:else></view> <!-- 占位保持对其 -->
+      </view>
+    </view>
+  </view>
+
+  <!-- 会员特权 -->
+  <view class="privilege-section">
+    <view class="section-title">
+      <text class="title-text">会员特权</text>
+    </view>
+    <view class="privilege-grid">
+      <view class="privilege-item" wx:for="{{rightsList}}" wx:key="index">
+        <view class="icon-wrap">
+          <t-icon name="{{item.icon}}" size="54rpx" color="#F3D19E" />
+        </view>
+        <text class="privilege-name">{{item.name}}</text>
+        <text class="privilege-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部支付栏 -->
+  <view class="bottom-bar">
+    <view class="price-info">
+      <text class="total-label">总计：</text>
+      <text class="total-symbol">¥</text>
+      <text class="total-price">{{selectedPackage.currentPrice || '0.00'}}</text>
+      <text class="total-origin" wx:if="{{selectedPackage.originalPrice !== selectedPackage.currentPrice}}">¥{{selectedPackage.originalPrice}}</text>
+    </view>
+    <view class="pay-btn" bindtap="handlePay">
+      确认支付
+    </view>
+  </view>
+
+</view>

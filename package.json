@@ -1,0 +1,10 @@
+{
+  "name": "dewu-miniprogram",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dewu info mini program",
+  "dependencies": {
+    "@vant/weapp": "1.11.7",
+    "tdesign-miniprogram": "^1.12.1"
+  }
+}

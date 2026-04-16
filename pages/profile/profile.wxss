@@ -1,0 +1,129 @@
+/* 个人中心页样式 */
+
+.page-container {
+  min-height: 100vh;
+  background: var(--bg-white-linear-gradient);
+  padding: calc(5vh + env(safe-area-inset-top)) 24rpx env(safe-area-inset-bottom);
+}
+
+/* 用户卡片 */
+.user-card {
+  background-color: var(--bg-color-container);
+  border-radius: var(--radius-lg);
+  padding: 32rpx;
+  margin-top: 5vh;
+  margin-bottom: 24rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+.not-login {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.default-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+}
+
+.login-tip {
+  flex: 1;
+}
+
+.login-text {
+  display: block;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-color-primary);
+  margin-bottom: 4rpx;
+}
+
+.login-desc {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--text-color-secondary);
+}
+
+.logged-in {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.user-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-name {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--text-color-primary);
+  margin-bottom: 8rpx;
+}
+
+.member-status {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.expire-time {
+  font-size: var(--font-size-xs);
+  color: var(--text-color-placeholder);
+}
+
+/* 会员卡片 */
+.member-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #1a1a1a, #333);
+  border-radius: var(--radius-lg);
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+}
+
+.member-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.member-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: #FFD700;
+}
+
+.member-desc {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* 菜单区域 */
+.menu-section {
+  margin-bottom: 32rpx;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* 退出登录 */
+.logout-section {
+  margin-top: 48rpx;
+}

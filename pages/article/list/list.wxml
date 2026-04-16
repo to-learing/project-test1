@@ -1,0 +1,129 @@
+<!--
+  文章列表页
+  根据 articleType 展示不同模块的文章
+  支持搜索、下拉刷新、上拉加载
+-->
+<view class="page-container">
+  <!-- 页面头部 -->
+  <view class="page-header" style="background: linear-gradient(135deg, {{currentTheme.color}}, {{currentTheme.color}}cc);">
+    <view class="header-content">
+      <van-icon name="{{currentTheme.icon}}" size="28px" color="#fff" />
+      <view class="header-info">
+        <text class="header-title">{{pageTitle}}</text>
+        <text class="header-subtitle">共 {{total}} 篇精选内容</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <van-search
+      value="{{ keyword }}"
+      placeholder="搜索{{pageTitle}}相关文章"
+      shape="round"
+      background="transparent"
+      bind:change="onSearchInput"
+      bind:search="onSearch"
+      bind:clear="onClearSearch"
+    />
+  </view>
+
+  <!-- 加载骨架屏 -->
+  <view wx:if="{{loading}}" class="loading-wrapper">
+    <view class="skeleton-item" wx:for="{{[1,2,3,4]}}" wx:key="*this">
+      <view class="skeleton-content">
+        <view class="skeleton-title"></view>
+        <view class="skeleton-desc"></view>
+        <view class="skeleton-meta"></view>
+      </view>
+      <view class="skeleton-cover"></view>
+    </view>
+  </view>
+
+  <!-- 文章列表 -->
+  <view wx:elif="{{!isEmpty}}" class="article-list">
+    <view
+      wx:for="{{articleList}}"
+      wx:key="id"
+      class="article-item"
+      data-id="{{item.id}}"
+      bindtap="goToDetail"
+    >
+      <!-- 有封面图的布局 -->
+      <block wx:if="{{item.coverImage}}">
+        <view class="article-with-cover">
+          <view class="article-info">
+            <view class="article-title">{{item.title}}</view>
+            <view class="article-meta">
+              <view class="meta-item">
+                <van-icon name="eye-o" size="14px" />
+                <text>{{item.viewCountFormatted}}</text>
+              </view>
+              <view class="meta-item">
+                <van-icon name="good-job-o" size="14px" />
+                <text>{{item.likeCountFormatted}}</text>
+              </view>
+              <view class="meta-time">{{item.createTimeFormatted}}</view>
+            </view>
+          </view>
+          <view class="article-cover">
+            <image 
+              src="{{item.coverImage}}"
+              mode="aspectFill" 
+              lazy-load
+              data-index="{{index}}"
+              binderror="onImageError"
+            />
+          </view>
+        </view>
+      </block>
+
+      <!-- 无封面图的布局 -->
+      <block wx:else>
+        <view class="article-no-cover">
+          <view class="article-title">{{item.title}}</view>
+          <view class="article-meta">
+            <view class="meta-item">
+              <van-icon name="eye-o" size="14px" />
+              <text>{{item.viewCountFormatted}}</text>
+            </view>
+            <view class="meta-item">
+              <van-icon name="good-job-o" size="14px" />
+              <text>{{item.likeCountFormatted}}</text>
+            </view>
+            <view class="meta-time">{{item.createTimeFormatted}}</view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{loadingMore}}">
+      <van-loading size="20px" color="{{currentTheme.color}}">加载中...</van-loading>
+    </view>
+
+    <!-- 没有更多了 -->
+    <view class="no-more" wx:elif="{{!hasMore && articleList.length > 0}}">
+      <text>—— 已经到底了 ——</text>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-wrapper">
+    <van-empty 
+      image="search" 
+      description="{{keyword ? '未找到相关文章' : '暂无文章'}}"
+    >
+      <van-button 
+        wx:if="{{keyword}}"
+        round 
+        type="primary" 
+        size="small" 
+        color="{{currentTheme.color}}"
+        bindtap="onClearSearch"
+      >
+        清空搜索
+      </van-button>
+    </van-empty>
+  </view>
+</view>

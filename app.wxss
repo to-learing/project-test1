@@ -1,0 +1,349 @@
+/**
+ * 极光密码小程序全局样式
+ * 
+ * 说明：
+ * 1. 定义全局CSS变量（主题色、字体等）
+ * 2. 定义常用公共样式类
+ * 3. 重置和规范基础样式
+ */
+
+/* ========================================
+   CSS变量定义 - 主题配置
+   ======================================== */
+page {
+  
+  /* 功能色 */
+  /* Blue 系列 */
+  --blue-color-1: #f2f3ff;
+  --blue-color-2: #d9e6ff;
+  --blue-color-3: #b5c7ff;
+  --blue-color-4: #8eabff;
+  --blue-color-5: #618dff;
+  --blue-color-6: #366ef4;
+  --blue-color-7: #0052d9;
+  --blue-color-8: #003cab;
+  --blue-color-9: #002a7c;
+  --blue-color-10: #001a57;
+  
+  /* Red 系列 */
+  --red-color-1: #fff0ed;
+  --red-color-2: #ffd8d2;
+  --red-color-3: #ffb9b0;
+  --red-color-4: #ff9285;
+  --red-color-5: #ff6b5d;
+  --red-color-6: #d54941;
+  --red-color-7: #ad352f;
+  --red-color-8: #881f1c;
+  --red-color-9: #68070a;
+  --red-color-10: #490002;
+
+  /* Orange 系列 */
+  --orange-color-1: #fff1e9;
+  --orange-color-2: #ffd9c2;
+  --orange-color-3: #ffb98c;
+  --orange-color-4: #fa9550;
+  --orange-color-5: #e37318;
+  --orange-color-6: #be5a00;
+  --orange-color-7: #954500;
+  --orange-color-8: #713300;
+  --orange-color-9: #532300;
+  --orange-color-10: #3b1700;
+
+  /* Green 系列 */
+  --green-color-1: #e3f9e9;
+  --green-color-2: #c6f3d7;
+  --green-color-3: #92dab2;
+  --green-color-4: #56c08d;
+  --green-color-5: #2ba471;
+  --green-color-6: #008858;
+  --green-color-7: #006c45;
+  --green-color-8: #005334;
+  --green-color-9: #003b23;
+  --green-color-10: #002515;
+
+  /* 青绿色 系列 */
+  --teal-color-1: #e6f7f5;
+  --teal-color-2: #c0e8e4;
+  --teal-color-3: #92d7d2;
+  --teal-color-4: #66c5be;
+  --teal-color-5: #00c1c1;
+  --teal-color-6: #00b3b3; /* 默认主题色 */
+  --teal-color-7: #1d857b;
+  --teal-color-8: #146d63;
+  --teal-color-9: #0d564e;
+  --teal-color-10: #08403a;
+
+  /* 主题色 */
+  --black-color: #000000;
+  --danger-color: var(--red-color-6);
+  --warning-color: var(--orange-color-5);
+  --success-color: var(--green-color-5);
+  --brand-color: var(--teal-color-6);
+  --brand-color-hover: var(--teal-color-5);
+  --brand-color-active: var(--teal-color-8);
+  --brand-color-light: var(--teal-color-1);
+  --brand-color-light-hover: var(--teal-color-2);
+  --brand-gradient: linear-gradient(135deg, var(--teal-color-5) 0%, var(--teal-color-7) 100%);
+  --brand-gradient-hero: linear-gradient(120deg, var(--brand-color) 0%, var(--brand-color) 100%);
+
+
+  /* 字体颜色 */
+  --font-gray-1:rgba(0, 0, 0, 0.9);
+  --font-gray-2:rgba(0, 0, 0, 0.6);
+  --font-gray-3:rgba(0, 0, 0, 0.4);
+  --font-gray-4:rgba(0, 0, 0, 0.26);
+
+  --font-white-1:rgba(255, 255, 255, 1);
+  --font-white-2:rgba(255, 255, 255, 0.55);
+  --font-white-3:rgba(255, 255, 255, 0.35);
+  --font-white-4:rgba(255, 255, 255, 0.22);
+
+  --text-color-primary: var(--font-gray-1);
+  --text-color-secondary: var(--font-gray-2);
+  --text-color-placeholder: var(--font-gray-3);
+  --text-color-disabled: var(--font-gray-4);
+  --text-color-anti: var(--font-white-1);
+  --text-color-brand: var(--teal-color-7);
+  --text-color-link: var(--teal-color-8);
+  --text-color-white: #FFFFFF;
+  
+
+  /* 背景颜色 */
+  --white-color: #FFFFFF;
+  --gray-color-1:#f3f3f3;
+  --gray-color-2:#eeeeee;
+  --gray-color-3:#e8e8e8;
+  --gray-color-4:#dddddd;
+  --gray-color-5:#c6c6c6;
+
+  --bg-color-page: var(--gray-color-2); /* 默认页面底层背景颜色 */
+  --bg-color-container: var(--white-color); /* 主要容器背景,页面背景 */
+  --bg-color-container-active: var(--gray-color-3); /* 主要容器背景click，页面背景click */
+
+  --bg-color-component-disable: var(--gray-color-2); /* 组件禁用背景颜色 */
+
+  --component-stroke: var(--gray-color-3); /* 默认组件分割线颜色 */
+  --component-border: var(--gray-color-4); /* 默认边框颜色 */
+  
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F5;
+  --bg-tertiary: #EEEEEE;
+  --bg-white-linear-gradient: linear-gradient(180deg, #ffffff 0%, #f7f9fb 100%);
+  
+  
+  /* 间距 */
+  --spacing-xs: 8rpx;
+  --spacing-sm: 16rpx;
+  --spacing-md: 24rpx;
+  --spacing-lg: 32rpx;
+  --spacing-xl: 48rpx;
+  
+  /* 圆角 */
+  --radius-sm: 8rpx;
+  --radius-md: 12rpx;
+  --radius-lg: 16rpx;
+  --radius-xl: 24rpx;
+  --radius-round: 999rpx;
+  
+  /* 字体大小 */
+  --font-size-xs: 20rpx;
+  --font-size-sm: 24rpx;
+  --font-size-md: 28rpx;
+  --font-size-lg: 32rpx;
+  --font-size-xl: 36rpx;
+  --font-size-xxl: 40rpx;
+  
+  /* 行高 */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-loose: 1.8;
+  
+  /* 投影 - 参考设计稿的多层复合投影 */
+  /* 基础投影（hover / 卡片等） */
+  --shadow-sm: 0 1rpx 10rpx rgba(0, 0, 0, 0.05), 0 4rpx 5rpx rgba(0, 0, 0, 0.08), 0 2rpx 4rpx -1rpx rgba(0, 0, 0, 0.12);
+  /* 中层投影（下拉菜单 / 气泡确认框 / 选择器 等） */
+  --shadow-md: 0 3rpx 14rpx rgba(0, 0, 0, 0.05), 0 8rpx 10rpx rgba(0, 0, 0, 0.06), 0 5rpx 5rpx -3rpx rgba(0, 0, 0, 0.10);
+  /* 上层投影（弹层 / 全屏提示 / 消息通知 等） */
+  --shadow-lg: 0 6rpx 30rpx rgba(0, 0, 0, 0.05), 0 16rpx 24rpx rgba(0, 0, 0, 0.04), 0 8rpx 10rpx -5rpx rgba(0, 0, 0, 0.08);
+  
+  /* 页面背景 */
+  background-color: var(--bg-secondary);
+  font-size: var(--font-size-md);
+  color: var(--text-color-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: var(--line-height-normal);
+
+}
+
+
+/* ========================================
+   间距工具类
+   ======================================== */
+
+/* 外边距 */
+.m-0 { margin: 0; }
+.m-xs { margin: var(--spacing-xs); }
+.m-sm { margin: var(--spacing-sm); }
+.m-md { margin: var(--spacing-md); }
+.m-lg { margin: var(--spacing-lg); }
+
+.mt-xs { margin-top: var(--spacing-xs); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+
+.mb-xs { margin-bottom: var(--spacing-xs); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+
+.ml-xs { margin-left: var(--spacing-xs); }
+.ml-sm { margin-left: var(--spacing-sm); }
+.ml-md { margin-left: var(--spacing-md); }
+.ml-lg { margin-left: var(--spacing-lg); }
+
+.mr-xs { margin-right: var(--spacing-xs); }
+.mr-sm { margin-right: var(--spacing-sm); }
+.mr-md { margin-right: var(--spacing-md); }
+.mr-lg { margin-right: var(--spacing-lg); }
+
+/* 内边距 */
+.p-0 { padding: 0; }
+.p-xs { padding: var(--spacing-xs); }
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+
+.pt-xs { padding-top: var(--spacing-xs); }
+.pt-sm { padding-top: var(--spacing-sm); }
+.pt-md { padding-top: var(--spacing-md); }
+.pt-lg { padding-top: var(--spacing-lg); }
+
+.pb-xs { padding-bottom: var(--spacing-xs); }
+.pb-sm { padding-bottom: var(--spacing-sm); }
+.pb-md { padding-bottom: var(--spacing-md); }
+.pb-lg { padding-bottom: var(--spacing-lg); }
+
+.pl-xs { padding-left: var(--spacing-xs); }
+.pl-sm { padding-left: var(--spacing-sm); }
+.pl-md { padding-left: var(--spacing-md); }
+.pl-lg { padding-left: var(--spacing-lg); }
+
+.pr-xs { padding-right: var(--spacing-xs); }
+.pr-sm { padding-right: var(--spacing-sm); }
+.pr-md { padding-right: var(--spacing-md); }
+.pr-lg { padding-right: var(--spacing-lg); }
+
+.px-sm { padding-left: var(--spacing-sm); padding-right: var(--spacing-sm); }
+.px-md { padding-left: var(--spacing-md); padding-right: var(--spacing-md); }
+.px-lg { padding-left: var(--spacing-lg); padding-right: var(--spacing-lg); }
+
+.py-sm { padding-top: var(--spacing-sm); padding-bottom: var(--spacing-sm); }
+.py-md { padding-top: var(--spacing-md); padding-bottom: var(--spacing-md); }
+.py-lg { padding-top: var(--spacing-lg); padding-bottom: var(--spacing-lg); }
+
+/* ========================================
+   文字工具类
+   ======================================== */
+
+/* 字体大小 */
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-md { font-size: var(--font-size-md); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-xxl { font-size: var(--font-size-xxl); }
+
+/* 字体颜色 */
+.text-primary { color: var(--text-color-primary); }
+.text-secondary { color: var(--text-color-secondary); }
+.text-placeholder { color: var(--text-color-placeholder); }
+.text-white { color: var(--text-color-white); }
+.text-danger { color: var(--danger-color); }
+.text-success { color: var(--success-color); }
+.text-warning { color: var(--warning-color); }
+.text-brand { color: var(--brand-color); }
+
+/* 字体粗细 */
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-bold { font-weight: 700; }
+
+/* 文字对齐 */
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+/* 文字截断 */
+.text-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.text-ellipsis-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.text-ellipsis-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========================================
+   背景和边框工具类
+   ======================================== */
+
+/* 背景色 */
+.bg-white { background-color: var(--bg-color-container); }
+.bg-gray { background-color: var(--bg-secondary); }
+.bg-black { background-color: var(--black-color); }
+.bg-brand { background-color: var(--brand-color); }
+
+/* 圆角 */
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-full { border-radius: var(--radius-round); }
+
+/* 边框 */
+.border {
+  border: 1rpx solid var(--component-border);
+}
+
+.border-top {
+  border-top: 1rpx solid var(--component-border);
+}
+
+.border-bottom {
+  border-bottom: 1rpx solid var(--component-border);
+}
+
+/* 阴影 */
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+
+
+/* ========================================
+   通用组件样式
+   ======================================== */
+
+/* 安全区域底部 */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 页面容器 */
+.page-container {
+  min-height: 100vh;
+  background-color: var(--bg-secondary);
+}

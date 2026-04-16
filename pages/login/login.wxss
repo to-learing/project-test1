@@ -1,0 +1,65 @@
+/* 登录页面：极简布局 */
+
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 48rpx;
+  background: linear-gradient(180deg, #ffffff 0%, #f7f9fb 100%);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 80rpx;
+}
+
+.logo {
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 24rpx;
+  border-radius: 32rpx;
+  box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.08);
+}
+
+.title {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: var(--text-color-primary);
+  margin-bottom: 12rpx;
+}
+
+.subtitle {
+  font-size: var(--font-size-md);
+  color: var(--text-color-secondary);
+}
+
+.login-section {
+  width: 100%;
+  margin-bottom: 48rpx;
+}
+
+.wechat-login-btn {
+  height: 96rpx !important;
+  line-height: 96rpx !important;
+  font-size: var(--font-size-lg) !important;
+  background: linear-gradient(135deg, #07C160, #06AD56) !important;
+  border: none !important;
+}
+
+.btn-icon {
+  margin-right: 12rpx;
+}
+
+.footer {
+  position: absolute;
+  bottom: 80rpx;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: var(--text-color-placeholder);
+  font-size: var(--font-size-sm);
+}

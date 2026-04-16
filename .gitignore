@@ -1,0 +1,33 @@
+# 忽略小程序构建生成的依赖目录
+miniprogram_npm/
+node_modules/
+
+config\index.js
+project.config.json
+project.private.config.json
+
+
+# 忽略临时文件
+*.tmp
+*.log
+.DS_Store
+
+# 忽略编译生成的文件
+dist/
+build/
+
+# 忽略本地配置文件
+.project
+.project*
+
+# 微信小程序特定的临时文件
+.weapp/
+.sourcemap
+
+# 用户特定配置
+.vscode/
+.idea/
+
+# 本地配置
+config/local.js
+.env*

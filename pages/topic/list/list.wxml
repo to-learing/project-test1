@@ -1,0 +1,128 @@
+<view class="topic-container">
+  <view class="header-area">
+    <view class="search-box">
+      <t-search 
+        placeholder="搜索潮流话题、好物..." 
+        value="{{searchValue}}" 
+        bind:change="onSearchChange" 
+        bind:submit="onSearch" 
+        shape="round" 
+      />
+    </view>
+    <t-tabs 
+      defaultValue="{{currentTab}}" 
+      bind:change="onTabChange" 
+      theme="line" 
+    >
+      <t-tab-panel label="推荐" value="recommend" />
+      <t-tab-panel label="最新" value="latest" />
+      <t-tab-panel label="热门" value="hot" />
+      <t-tab-panel label="关注" value="following" />
+    </t-tabs>
+  </view>
+
+  <scroll-view scroll-y class="topic-list" enable-back-to-top>
+    <block wx:for="{{topicList}}" wx:key="id">
+      <view class="topic-card" bindtap="goToDetail" data-id="{{item.id}}" hover-class="card-hover">
+
+        <!-- 作者信息 -->
+        <view class="card-header">
+           <view class="user-info" catchtap="onUserClick" data-userid="{{item.author.id}}">
+             <t-avatar class="current-user-avatar" image="{{item.author.avatar}}" size="64rpx" />
+             <view class="user-meta">
+                <text class="author-name">{{item.author.name}}</text>
+                <text class="time">{{item.timeAgo}}</text>
+             </view>
+           </view>
+           <t-icon name="more" size="40rpx" color="#ccc" catchtap="onMoreOptions" />
+        </view>
+        
+        <view class="card-content">
+
+          <!-- 标题和文本内容 -->
+          <view class="text-area">
+            <view class="title" wx:if="{{item.title}}">{{item.title}}</view>
+            <view class="summary">{{item.summary}}</view>
+          </view>
+
+          <!-- 图片预览 -->
+          <view wx:if="{{item.images && item.images.length}}" class="media-preview {{item.images.length === 1 ? 'single-img' : 'multi-img'}}">
+             <block wx:if="{{item.images.length === 1}}">
+                <t-image 
+                  src="{{item.images[0]}}" 
+                  mode="heightFix" 
+                  shape="round" 
+                  width="100%" 
+                  height="300rpx" 
+                  catchtap="onPreviewImage"
+                  data-urls="{{item.images}}"
+                  data-current="{{item.images[0]}}"
+                />
+             </block>
+             <block wx:else>
+                <scroll-view scroll-x class="images-scroll" enhanced show-scrollbar="{{false}}">
+                  <view class="scroll-images">
+                    <t-image 
+                        wx:for="{{item.images}}" 
+                        wx:for-item="img"
+                        wx:for-index="imgIndex"
+                        wx:key="*this"
+                        src="{{img}}" 
+                        mode="aspectFill"
+                        width="280rpx" 
+                        height="280rpx" 
+                        shape="round"
+                        class="scroll-item"
+                        catchtap="onPreviewImage"
+                        data-urls="{{item.images}}"
+                        data-current="{{img}}"
+                    />
+                  </view>
+                </scroll-view>
+             </block>
+          </view>
+
+          <!-- 标签 -->
+          <view class="tags-row" wx:if="{{item.tags && item.tags.length}}">
+            <view class="tag-item" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" catchtap="onTagClick" data-tag="{{tag}}">
+                <text class="tag-hash">#</text>{{tag}}
+            </view>
+          </view>
+          
+        </view>
+
+        <view class="card-footer">
+           <view class="action-btn" catchtap="onLike" data-id="{{item.id}}">
+             <t-icon name="{{item.isLiked ? 'heart-filled' : 'heart'}}" size="40rpx" color="{{item.isLiked ? '#ff4d4f' : '#666'}}" />
+             <text class="action-text {{item.isLiked ? 'active' : ''}}">{{item.likes || '赞'}}</text>
+           </view>
+           <view class="action-btn">
+             <t-icon name="chat" size="40rpx" color="#666" />
+             <text class="action-text">{{item.comments || '评论'}}</text>
+           </view>
+           <view class="action-btn">
+             <t-icon name="share" size="40rpx" color="#666" />
+             <text class="action-text">分享</text>
+           </view>
+        </view>
+      </view>
+    </block>
+    
+    <view wx:if="{{topicList.length === 0 && !loading}}" class="empty-state">
+      <view class="empty-icon-wrapper">
+         <t-icon name="books" size="96rpx" color="#ddd" />
+      </view>
+      <text>暂无相关话题</text>
+    </view>
+
+    <!-- 底部加载状态 -->
+    <view class="load-more" wx:if="{{topicList.length > 0}}">
+      <t-loading wx:if="{{loading}}" size="24px" text="加载中..." />
+      <text wx:elif="{{!hasMore}}" class="no-more">没有更多了</text>
+    </view>
+    
+    <view class="footer-spacer"></view>
+  </scroll-view>
+
+  <t-fab icon="add" bind:click="goToCreate" text="发帖"  style="right: 32rpx; bottom: 80rpx;"></t-fab>
+</view>

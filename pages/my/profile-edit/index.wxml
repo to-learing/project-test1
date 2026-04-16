@@ -1,0 +1,18 @@
+<view class="page-container">
+  <view class="form-group">
+    <view class="avatar-cell">
+       <t-avatar image="{{avatarUrl}}" size="large" icon="user" bind:tap="handleChooseAvatar" />
+       <view class="tip">点击更换头像</view>
+    </view>
+    
+    <view class="input-box">
+        <t-input label="昵称" placeholder="请输入昵称" value="{{nickName}}" bind:change="handleNickNameChange" align="right" />
+        
+        <t-textarea label="简介" placeholder="介绍一下自己吧" value="{{bio}}" bind:change="handleBioChange" maxcharacter="100" />
+    </view>
+  </view>
+
+  <view class="btn-area">
+     <t-button theme="primary" block size="large" bind:tap="handleSave">保存修改</t-button>
+  </view>
+</view>

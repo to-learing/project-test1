@@ -1,0 +1,13 @@
+{
+  "usingComponents": {
+    "van-search": "@vant/weapp/search/index",
+    "van-icon": "@vant/weapp/icon/index",
+    "van-loading": "@vant/weapp/loading/index",
+    "van-empty": "@vant/weapp/empty/index",
+    "van-button": "@vant/weapp/button/index"
+  },
+  "enablePullDownRefresh": false,
+  "navigationStyle": "default",
+  "navigationBarTitleText": "",
+  "onReachBottomDistance": 100
+}

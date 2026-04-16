@@ -1,0 +1,11 @@
+{
+  "usingComponents": {
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-input": "tdesign-miniprogram/input/input",
+    "t-textarea": "tdesign-miniprogram/textarea/textarea",
+    "t-message": "tdesign-miniprogram/message/message",
+    "t-icon": "tdesign-miniprogram/icon/icon",
+    "t-upload": "tdesign-miniprogram/upload/upload"
+  },
+  "navigationBarTitleText": "发布话题"
+}

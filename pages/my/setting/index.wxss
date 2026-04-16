@@ -1,0 +1,13 @@
+.page-container {
+  min-height: 100vh;
+  background-color: #F5F5F5;
+  padding: 24rpx;
+}
+
+.setting-group {
+  margin-bottom: 24rpx;
+}
+
+.logout-btn {
+  margin-top: 48rpx;
+}

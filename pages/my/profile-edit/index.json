@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "t-input": "tdesign-miniprogram/input/input",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-avatar": "tdesign-miniprogram/avatar/avatar",
+    "t-textarea": "tdesign-miniprogram/textarea/textarea"
+  },
+  "navigationBarTitleText": "个人资料"
+}
