@@ -103,10 +103,12 @@ App({
     // 检查更新
     this.checkUpdate();
     
-    // 初始化云环境（如果配置了云托管）
-    if (config.USE_WX_CLOUD) {
-      wx.cloud.init();
-    }
+    // 初始化云环境
+    wx.cloud.init({
+      env: config.WX_CLOUD_ENV_ID,
+      traceUser: true
+    });
+    console.log('[App] 云环境已初始化:', config.WX_CLOUD_ENV_ID);
   },
 
   /**

@@ -12,6 +12,7 @@
 
 const config = require('../config/index');
 const statusCodes = require('./statusCodes');
+const cloudStorage = require('../utils/cloudStorage');
 
 // 请求队列（用于Token刷新时暂存请求）
 let requestQueue = [];
@@ -596,60 +597,42 @@ function del(url, params = {}, options = {}) {
 }
 
 /**
- * 上传文件
+ * 上传文件到云存储
  * @param {String} filePath 文件临时路径
  * @param {Object} options 其他配置
  * @returns {Promise}
  */
 function uploadFile(filePath, options = {}) {
-  // 上传文件暂时不支持云托管，继续使用传统HTTP方式
   return new Promise((resolve, reject) => {
-    const accessToken = getToken();
-    
     wx.showLoading({
-      title: '上传中...',
+      title: options.loadingText || '上传中...',
       mask: true
     });
     
-    wx.uploadFile({
-      url: config.UPLOAD_URL,
-      filePath: filePath,
-      name: 'file',
-      header: {
-        'Authorization': accessToken ? `Bearer ${accessToken}` : ''
-      },
-      formData: options.formData || {},
-      success: function(res) {
+    cloudStorage.uploadAndGetUrl(filePath, options.cloudPath)
+      .then(result => {
         wx.hideLoading();
-        
-        if (res.statusCode === statusCodes.HTTP_STATUS.SUCCESS) {
-          try {
-            const data = JSON.parse(res.data);
-            if (data.code === statusCodes.BUSINESS_STATUS.SUCCESS) {
-              resolve(data);
-            } else {
-              wx.showToast({
-                title: data.message ||  '上传失败',
-                icon: 'none'
-              });
-              reject(data);
-            }
-          } catch (e) {
-            reject({ code: -1, message: '解析响应数据失败' });
-          }
-        } else {
-          reject({ code: res.statusCode, message: '上传失败' });
-        }
-      },
-      fail: function(err) {
+        console.log('[Upload] 云存储上传成功:', result.fileID, result.tempFileURL);
+        resolve({
+          code: statusCodes.BUSINESS_STATUS.SUCCESS,
+          data: result.tempFileURL,
+          fileID: result.fileID,
+          message: '上传成功'
+        });
+      })
+      .catch(err => {
         wx.hideLoading();
+        console.error('[Upload] 云存储上传失败:', err);
         wx.showToast({
           title: '上传失败',
           icon: 'none'
         });
-        reject(err);
-      }
-    });
+        reject({
+          code: -1,
+          message: err.errMsg || '云存储上传失败',
+          error: err
+        });
+      });
   });
 }
 

@@ -44,6 +44,9 @@ const WX_CLOUD_ENV_ID = 'prod-6g8j1pbodc5cc3d7';
 // 微信云托管服务名称（在微信云托管-服务管理-服务列表中获取）
 const WX_CLOUD_SERVICE_NAME = 'demo';
 
+// 云存储路径前缀
+const WX_CLOUD_STORAGE_PATH_PREFIX = 'avatars/';
+
 // 导出配置
 module.exports = {
   // 当前环境
@@ -137,5 +140,8 @@ module.exports = {
   // 微信云托管配置
   USE_WX_CLOUD: USE_WX_CLOUD,
   WX_CLOUD_ENV_ID: WX_CLOUD_ENV_ID,
-  WX_CLOUD_SERVICE_NAME: WX_CLOUD_SERVICE_NAME
+  WX_CLOUD_SERVICE_NAME: WX_CLOUD_SERVICE_NAME,
+  
+  // 云存储路径前缀
+  WX_CLOUD_STORAGE_PATH_PREFIX: WX_CLOUD_STORAGE_PATH_PREFIX
 };

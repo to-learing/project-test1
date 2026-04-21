@@ -1,5 +1,6 @@
 const app = getApp();
 const api = require('../../../services/api');
+const config = require('../../../config/index');
 
 Page({
   data: {
@@ -7,7 +8,9 @@ Page({
     nickName: '',
     bio: '',
     gender: 0,
-    saving: false
+    saving: false,
+    originalAvatar: '',
+    currentFileID: null
   },
   
   onLoad() {
@@ -19,8 +22,10 @@ Page({
    */
   loadUserInfo() {
     const userInfo = app.globalData.userInfo || {};
+    const avatar = userInfo.avatar || '';
     this.setData({
-      avatarUrl: userInfo.avatar || '',
+      avatarUrl: avatar,
+      originalAvatar: avatar,
       nickName: userInfo.nickname || '',
       bio: userInfo.bio || '',
       gender: userInfo.gender || 0
@@ -37,7 +42,6 @@ Page({
       sourceType: ['album', 'camera'],
       success: (res) => {
         const tempFilePath = res.tempFiles[0].tempFilePath;
-        // 上传图片到服务器
         this.uploadAvatar(tempFilePath);
       }
     });
@@ -50,21 +54,34 @@ Page({
     wx.showLoading({ title: '上传中...' });
     
     api.upload.image(filePath).then(res => {
+      wx.hideLoading();
+      
       if (res.code === 200 && res.data) {
-        this.setData({ avatarUrl: res.data.url || res.data });
+        const avatarUrl = res.data.url || res.data;
+        const fileID = res.fileID || null;
+        
+        this.setData({ 
+          avatarUrl: avatarUrl,
+          currentFileID: fileID
+        });
+        
         wx.showToast({ title: '上传成功', icon: 'success' });
+        
+        if (config.ENABLE_LOG) {
+          console.log('[Profile Edit] 头像上传成功:', {
+            url: avatarUrl,
+            fileID: fileID
+          });
+        }
       } else {
-        // 如果上传失败，先用本地路径显示
         this.setData({ avatarUrl: filePath });
         wx.showToast({ title: '上传失败，将使用本地图片', icon: 'none' });
       }
     }).catch(err => {
+      wx.hideLoading();
       console.error('上传头像失败:', err);
-      // 上传失败时使用本地路径
       this.setData({ avatarUrl: filePath });
       wx.showToast({ title: '上传失败', icon: 'none' });
-    }).finally(() => {
-      wx.hideLoading();
     });
   },
 
@@ -80,7 +97,7 @@ Page({
    * 保存用户资料
    */
   handleSave() {
-    const { nickName, avatarUrl, bio, gender, saving } = this.data;
+    const { nickName, avatarUrl, bio, gender, saving, originalAvatar, currentFileID } = this.data;
     
     if (saving) return;
     
@@ -99,7 +116,6 @@ Page({
       gender: gender
     }).then(res => {
       if (res.code === 200 && res.data) {
-        // 更新全局用户信息
         const userInfo = res.data;
         app.globalData.userInfo = userInfo;
         wx.setStorageSync('userInfo', userInfo);
