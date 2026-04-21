@@ -103,9 +103,13 @@ App({
     // 检查更新
     this.checkUpdate();
     
-    // 初始化云环境（如果配置了云托管）
-    if (config.USE_WX_CLOUD) {
-      wx.cloud.init();
+    // 初始化云环境（如果配置了云托管或云存储）
+    if (config.USE_WX_CLOUD || config.USE_WX_CLOUD_STORAGE) {
+      wx.cloud.init({
+        env: config.WX_CLOUD_STORAGE_ENV_ID || config.WX_CLOUD_ENV_ID,
+        traceUser: true
+      });
+      console.log('[App] 云环境已初始化:', config.WX_CLOUD_STORAGE_ENV_ID || config.WX_CLOUD_ENV_ID);
     }
   },
 
@@ -384,5 +388,96 @@ App({
       return false;
     }
     return true;
+  },
+
+  /**
+   * 云存储上传文件
+   * @param {String} filePath 本地文件路径
+   * @param {String} cloudPath 云存储路径（可选，不传则自动生成）
+   * @returns {Promise} 返回上传结果
+   */
+  uploadToCloudStorage: function(filePath, cloudPath) {
+    const that = this;
+    const config = require('./config/index');
+    
+    return new Promise((resolve, reject) => {
+      if (!config.USE_WX_CLOUD_STORAGE) {
+        reject(new Error('云存储未启用，请检查配置 USE_WX_CLOUD_STORAGE'));
+        return;
+      }
+      
+      // 如果没有指定云存储路径，自动生成
+      if (!cloudPath) {
+        const timestamp = Date.now();
+        const randomStr = Math.random().toString(36).substring(2, 8);
+        const extension = filePath.substring(filePath.lastIndexOf('.'));
+        cloudPath = config.WX_CLOUD_STORAGE_PATH_PREFIX + timestamp + '_' + randomStr + extension;
+      }
+      
+      console.log('[App] 云存储上传:', filePath, '->', cloudPath);
+      
+      wx.cloud.uploadFile({
+        cloudPath: cloudPath,
+        filePath: filePath,
+        success: res => {
+          console.log('[App] 云存储上传成功:', res.fileID);
+          resolve({
+            fileID: res.fileID,
+            statusCode: res.statusCode
+          });
+        },
+        fail: err => {
+          console.error('[App] 云存储上传失败:', err);
+          reject(err);
+        }
+      });
+    });
+  },
+
+  /**
+   * 根据云存储fileID获取临时访问链接
+   * @param {String} fileID 云存储文件ID
+   * @returns {Promise} 返回临时URL
+   */
+  getCloudStorageTempUrl: function(fileID) {
+    return new Promise((resolve, reject) => {
+      wx.cloud.getTempFileURL({
+        fileList: [fileID],
+        success: res => {
+          if (res.fileList && res.fileList.length > 0) {
+            const tempFileURL = res.fileList[0].tempFileURL;
+            console.log('[App] 获取云存储临时链接成功:', tempFileURL);
+            resolve(tempFileURL);
+          } else {
+            reject(new Error('获取临时链接失败'));
+          }
+        },
+        fail: err => {
+          console.error('[App] 获取云存储临时链接失败:', err);
+          reject(err);
+        }
+      });
+    });
+  },
+
+  /**
+   * 删除云存储文件
+   * @param {Array} fileList 要删除的文件ID数组
+   * @returns {Promise}
+   */
+  deleteCloudStorageFiles: function(fileList) {
+    return new Promise((resolve, reject) => {
+      wx.cloud.deleteFile({
+        fileList: fileList,
+        success: res => {
+          console.log('[App] 删除云存储文件成功:', res.fileList);
+          resolve(res.fileList);
+        },
+        fail: err => {
+          console.error('[App] 删除云存储文件失败:', err);
+          reject(err);
+        }
+      });
+    });
   }
 });

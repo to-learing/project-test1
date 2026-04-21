@@ -602,12 +602,78 @@ function del(url, params = {}, options = {}) {
  * @returns {Promise}
  */
 function uploadFile(filePath, options = {}) {
-  // 上传文件暂时不支持云托管，继续使用传统HTTP方式
+  // 如果启用了云存储，优先使用云存储上传
+  if (config.USE_WX_CLOUD_STORAGE) {
+    return uploadFileToCloudStorage(filePath, options);
+  }
+  
+  // 否则使用传统HTTP方式上传
+  return uploadFileByHttp(filePath, options);
+}
+
+/**
+ * 使用云存储上传文件
+ * @param {String} filePath 文件临时路径
+ * @param {Object} options 其他配置
+ * @returns {Promise}
+ */
+function uploadFileToCloudStorage(filePath, options = {}) {
+  return new Promise((resolve, reject) => {
+    const app = getApp();
+    if (!app) {
+      reject(new Error('无法获取App实例'));
+      return;
+    }
+    
+    wx.showLoading({
+      title: options.loadingText || '上传中...',
+      mask: true
+    });
+    
+    // 调用App中的云存储上传方法
+    app.uploadToCloudStorage(filePath, options.cloudPath)
+      .then(uploadResult => {
+        // 上传成功后获取临时访问URL
+        return app.getCloudStorageTempUrl(uploadResult.fileID)
+          .then(tempUrl => {
+            wx.hideLoading();
+            console.log('[Upload] 云存储上传成功:', uploadResult.fileID, tempUrl);
+            resolve({
+              code: statusCodes.BUSINESS_STATUS.SUCCESS,
+              data: tempUrl,
+              fileID: uploadResult.fileID,
+              message: '上传成功'
+            });
+          });
+      })
+      .catch(err => {
+        wx.hideLoading();
+        console.error('[Upload] 云存储上传失败:', err);
+        wx.showToast({
+          title: '上传失败',
+          icon: 'none'
+        });
+        reject({
+          code: -1,
+          message: err.errMsg || '云存储上传失败',
+          error: err
+        });
+      });
+  });
+}
+
+/**
+ * 使用传统HTTP方式上传文件
+ * @param {String} filePath 文件临时路径
+ * @param {Object} options 其他配置
+ * @returns {Promise}
+ */
+function uploadFileByHttp(filePath, options = {}) {
   return new Promise((resolve, reject) => {
     const accessToken = getToken();
     
     wx.showLoading({
-      title: '上传中...',
+      title: options.loadingText || '上传中...',
       mask: true
     });
     
