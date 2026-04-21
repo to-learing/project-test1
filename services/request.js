@@ -12,6 +12,7 @@
 
 const config = require('../config/index');
 const statusCodes = require('./statusCodes');
+const cloudStorage = require('../utils/cloudStorage');
 
 // 请求队列（用于Token刷新时暂存请求）
 let requestQueue = [];
@@ -596,55 +597,28 @@ function del(url, params = {}, options = {}) {
 }
 
 /**
- * 上传文件
+ * 上传文件到云存储
  * @param {String} filePath 文件临时路径
  * @param {Object} options 其他配置
  * @returns {Promise}
  */
 function uploadFile(filePath, options = {}) {
-  // 如果启用了云存储，优先使用云存储上传
-  if (config.USE_WX_CLOUD_STORAGE) {
-    return uploadFileToCloudStorage(filePath, options);
-  }
-  
-  // 否则使用传统HTTP方式上传
-  return uploadFileByHttp(filePath, options);
-}
-
-/**
- * 使用云存储上传文件
- * @param {String} filePath 文件临时路径
- * @param {Object} options 其他配置
- * @returns {Promise}
- */
-function uploadFileToCloudStorage(filePath, options = {}) {
   return new Promise((resolve, reject) => {
-    const app = getApp();
-    if (!app) {
-      reject(new Error('无法获取App实例'));
-      return;
-    }
-    
     wx.showLoading({
       title: options.loadingText || '上传中...',
       mask: true
     });
     
-    // 调用App中的云存储上传方法
-    app.uploadToCloudStorage(filePath, options.cloudPath)
-      .then(uploadResult => {
-        // 上传成功后获取临时访问URL
-        return app.getCloudStorageTempUrl(uploadResult.fileID)
-          .then(tempUrl => {
-            wx.hideLoading();
-            console.log('[Upload] 云存储上传成功:', uploadResult.fileID, tempUrl);
-            resolve({
-              code: statusCodes.BUSINESS_STATUS.SUCCESS,
-              data: tempUrl,
-              fileID: uploadResult.fileID,
-              message: '上传成功'
-            });
-          });
+    cloudStorage.uploadAndGetUrl(filePath, options.cloudPath)
+      .then(result => {
+        wx.hideLoading();
+        console.log('[Upload] 云存储上传成功:', result.fileID, result.tempFileURL);
+        resolve({
+          code: statusCodes.BUSINESS_STATUS.SUCCESS,
+          data: result.tempFileURL,
+          fileID: result.fileID,
+          message: '上传成功'
+        });
       })
       .catch(err => {
         wx.hideLoading();
@@ -659,63 +633,6 @@ function uploadFileToCloudStorage(filePath, options = {}) {
           error: err
         });
       });
-  });
-}
-
-/**
- * 使用传统HTTP方式上传文件
- * @param {String} filePath 文件临时路径
- * @param {Object} options 其他配置
- * @returns {Promise}
- */
-function uploadFileByHttp(filePath, options = {}) {
-  return new Promise((resolve, reject) => {
-    const accessToken = getToken();
-    
-    wx.showLoading({
-      title: options.loadingText || '上传中...',
-      mask: true
-    });
-    
-    wx.uploadFile({
-      url: config.UPLOAD_URL,
-      filePath: filePath,
-      name: 'file',
-      header: {
-        'Authorization': accessToken ? `Bearer ${accessToken}` : ''
-      },
-      formData: options.formData || {},
-      success: function(res) {
-        wx.hideLoading();
-        
-        if (res.statusCode === statusCodes.HTTP_STATUS.SUCCESS) {
-          try {
-            const data = JSON.parse(res.data);
-            if (data.code === statusCodes.BUSINESS_STATUS.SUCCESS) {
-              resolve(data);
-            } else {
-              wx.showToast({
-                title: data.message ||  '上传失败',
-                icon: 'none'
-              });
-              reject(data);
-            }
-          } catch (e) {
-            reject({ code: -1, message: '解析响应数据失败' });
-          }
-        } else {
-          reject({ code: res.statusCode, message: '上传失败' });
-        }
-      },
-      fail: function(err) {
-        wx.hideLoading();
-        wx.showToast({
-          title: '上传失败',
-          icon: 'none'
-        });
-        reject(err);
-      }
-    });
   });
 }
 
