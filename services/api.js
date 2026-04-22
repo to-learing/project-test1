@@ -554,6 +554,29 @@ const upload = {
    */
   image: function(filePath) {
     return http.uploadFile(filePath);
+  },
+  
+  /**
+   * 根据哈希值检查文件是否已存在
+   * @param {String} hash 文件MD5哈希值
+   * @returns {Promise} 返回 { exists, fileUrl, fileSize, uploadCount }
+   */
+  checkFile: function(hash) {
+    return http.get('/upload/check', { hash: hash }, { auth: true });
+  },
+  
+  /**
+   * 记录文件哈希映射
+   * @param {Object} data 记录数据
+   * @param {String} data.hash 文件哈希值
+   * @param {String} data.fileUrl 文件访问URL
+   * @param {Number} data.fileSize 文件大小
+   * @param {String} data.originalName 原始文件名
+   * @param {String} data.extension 文件扩展名
+   * @returns {Promise}
+   */
+  recordFileHash: function(data) {
+    return http.post('/upload/record', data, { auth: true });
   }
 };
 
