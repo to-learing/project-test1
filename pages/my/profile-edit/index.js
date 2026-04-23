@@ -50,85 +50,103 @@ Page({
 
   /**
    * 上传头像（支持去重）
+   * 流程：
+   * 1. 使用微信官方接口计算 MD5
+   * 2. 有 MD5：调用后端检查是否已存在
+   *    - 存在：直接复用已有 URL
+   *    - 不存在：上传云存储，然后记录哈希
+   * 3. 无 MD5：直接上传云存储，上传成功后尝试记录哈希
    */
   async uploadAvatar(filePath) {
     wx.showLoading({ title: '处理中...', mask: true });
     
-    try {
-      // 1. 计算文件 MD5 哈希值
-      if (config.ENABLE_LOG) {
-        console.log('[Profile Edit] 开始计算文件哈希:', filePath);
-      }
-      
-      const fileHash = await hashUtil.calculateFileMD5(filePath);
-      
-      if (config.ENABLE_LOG) {
-        console.log('[Profile Edit] 文件哈希计算完成:', fileHash);
-      }
-      
-      // 2. 调用后端检查文件是否已存在
+    // 1. 使用微信官方接口计算 MD5 和获取文件信息
+    const fileInfoResult = await hashUtil.getFileInfoWithHash(filePath);
+    const hasValidHash = fileInfoResult.success && fileInfoResult.digest;
+    
+    if (config.ENABLE_LOG) {
+      console.log('[Profile Edit] 文件信息获取结果:', {
+        filePath: filePath,
+        hasHash: hasValidHash,
+        hash: fileInfoResult.digest,
+        size: fileInfoResult.size,
+        error: fileInfoResult.error
+      });
+    }
+    
+    // 2. 如果有有效 MD5，先检查后端是否已存在
+    if (hasValidHash) {
       wx.showLoading({ title: '检查中...', mask: true });
       
-      const checkResult = await api.upload.checkFile(fileHash);
-      
-      if (config.ENABLE_LOG) {
-        console.log('[Profile Edit] 文件检查结果:', checkResult);
-      }
-      
-      // 3. 文件已存在，直接复用
-      if (checkResult.code === 200 && checkResult.data && checkResult.data.exists) {
-        const existingUrl = checkResult.data.fileUrl;
-        
-        this.setData({
-          avatarUrl: existingUrl,
-          currentFileID: null
-        });
-        
-        wx.hideLoading();
-        wx.showToast({ title: '已存在，无需上传', icon: 'success' });
+      try {
+        const checkResult = await api.upload.checkFile(fileInfoResult.digest);
         
         if (config.ENABLE_LOG) {
-          console.log('[Profile Edit] 文件已存在，复用已有URL:', {
-            url: existingUrl,
-            uploadCount: checkResult.data.uploadCount
-          });
+          console.log('[Profile Edit] 文件检查结果:', checkResult);
         }
-        return;
+        
+        // 文件已存在，直接复用
+        if (checkResult.code === 200 && checkResult.data && checkResult.data.exists) {
+          const existingUrl = checkResult.data.fileUrl;
+          
+          this.setData({
+            avatarUrl: existingUrl,
+            currentFileID: null
+          });
+          
+          wx.hideLoading();
+          wx.showToast({ title: '已存在，无需上传', icon: 'success' });
+          
+          if (config.ENABLE_LOG) {
+            console.log('[Profile Edit] 文件已存在，复用已有URL:', {
+              url: existingUrl,
+              hash: fileInfoResult.digest,
+              uploadCount: checkResult.data.uploadCount
+            });
+          }
+          return;
+        }
+        
+      } catch (checkErr) {
+        // 检查接口失败，不中断流程，继续上传
+        console.warn('[Profile Edit] 检查文件存在性失败，继续上传:', checkErr);
       }
-      
-      // 4. 文件不存在，上传云存储
-      wx.showLoading({ title: '上传中...', mask: true });
-      
+    }
+    
+    // 3. 文件不存在或没有 MD5，上传云存储
+    wx.showLoading({ title: '上传中...', mask: true });
+    
+    try {
       const uploadResult = await api.upload.image(filePath);
       
       if (uploadResult.code === 200 && uploadResult.data) {
         const avatarUrl = uploadResult.data.url || uploadResult.data;
         const fileID = uploadResult.fileID || null;
         
-        // 5. 记录文件哈希到后端
-        try {
-          // 获取文件信息
-          const fileInfo = await hashUtil.getFileInfo(filePath);
-          
-          // 提取文件名和扩展名
-          const fileName = this.extractFileName(filePath);
-          const extension = this.extractFileExtension(filePath);
-          
-          // 记录哈希
-          await api.upload.recordFileHash({
-            hash: fileHash,
-            fileUrl: avatarUrl,
-            fileSize: fileInfo.size,
-            originalName: fileName,
-            extension: extension
-          });
-          
-          if (config.ENABLE_LOG) {
-            console.log('[Profile Edit] 文件哈希记录成功');
+        // 4. 上传成功后，记录哈希到后端（如果有 MD5）
+        if (hasValidHash) {
+          try {
+            const fileName = hashUtil.extractFileName(filePath);
+            const extension = hashUtil.extractFileExtension(filePath);
+            
+            await api.upload.recordFileHash({
+              hash: fileInfoResult.digest,
+              fileUrl: avatarUrl,
+              fileSize: fileInfoResult.size,
+              originalName: fileName,
+              extension: extension
+            });
+            
+            if (config.ENABLE_LOG) {
+              console.log('[Profile Edit] 文件哈希记录成功:', {
+                hash: fileInfoResult.digest,
+                url: avatarUrl
+              });
+            }
+          } catch (recordErr) {
+            // 记录失败不影响主流程，只打日志
+            console.warn('[Profile Edit] 记录文件哈希失败:', recordErr);
           }
-        } catch (recordErr) {
-          // 记录失败不影响主流程，只打日志
-          console.warn('[Profile Edit] 记录文件哈希失败:', recordErr);
         }
         
         this.setData({
@@ -143,7 +161,8 @@ Page({
           console.log('[Profile Edit] 头像上传成功:', {
             url: avatarUrl,
             fileID: fileID,
-            hash: fileHash
+            hasHash: hasValidHash,
+            hash: fileInfoResult.digest
           });
         }
       } else {
@@ -152,75 +171,13 @@ Page({
         wx.showToast({ title: '上传失败，将使用本地图片', icon: 'none' });
       }
       
-    } catch (err) {
+    } catch (uploadErr) {
       wx.hideLoading();
-      console.error('[Profile Edit] 上传头像失败:', err);
+      console.error('[Profile Edit] 上传头像失败:', uploadErr);
       
-      // 出错时回退到传统上传方式
-      this.fallbackUpload(filePath);
-    }
-  },
-  
-  /**
-   * 回退上传方式（传统方式，不去重）
-   */
-  fallbackUpload(filePath) {
-    wx.showLoading({ title: '上传中...' });
-    
-    api.upload.image(filePath).then(res => {
-      wx.hideLoading();
-      
-      if (res.code === 200 && res.data) {
-        const avatarUrl = res.data.url || res.data;
-        const fileID = res.fileID || null;
-        
-        this.setData({
-          avatarUrl: avatarUrl,
-          currentFileID: fileID
-        });
-        
-        wx.showToast({ title: '上传成功', icon: 'success' });
-        
-        if (config.ENABLE_LOG) {
-          console.log('[Profile Edit] 回退上传成功:', {
-            url: avatarUrl,
-            fileID: fileID
-          });
-        }
-      } else {
-        this.setData({ avatarUrl: filePath });
-        wx.showToast({ title: '上传失败', icon: 'none' });
-      }
-    }).catch(err => {
-      wx.hideLoading();
-      console.error('[Profile Edit] 回退上传失败:', err);
       this.setData({ avatarUrl: filePath });
       wx.showToast({ title: '上传失败', icon: 'none' });
-    });
-  },
-  
-  /**
-   * 从文件路径提取文件名
-   */
-  extractFileName(filePath) {
-    if (!filePath) return '';
-    const lastSlash = filePath.lastIndexOf('/');
-    if (lastSlash >= 0) {
-      return filePath.substring(lastSlash + 1);
     }
-    return filePath;
-  },
-  
-  /**
-   * 提取文件扩展名
-   */
-  extractFileExtension(filePath) {
-    if (!filePath) return '';
-    const lastDot = filePath.lastIndexOf('.');
-    if (lastDot >= 0 && lastDot < filePath.length - 1) {
-      return filePath.substring(lastDot + 1).toLowerCase();
-    }
-    return '';
   },
 
   handleNickNameChange(e) {
