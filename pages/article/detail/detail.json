@@ -8,7 +8,9 @@
     "t-input": "tdesign-miniprogram/input/input",
     "t-button": "tdesign-miniprogram/button/button",
     "t-loading": "tdesign-miniprogram/loading/loading",
-    "t-tag": "tdesign-miniprogram/tag/tag"
+    "t-tag": "tdesign-miniprogram/tag/tag",
+    "t-skeleton": "tdesign-miniprogram/skeleton/skeleton",
+    "comment-section": "/components/comment-section/comment-section"
   },
   "navigationBarTitleText": ""
 }
