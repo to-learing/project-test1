@@ -315,11 +315,17 @@
   box-sizing: border-box;
 }
 
-.send-btn {
-  min-width: 160rpx;
+.input-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .popup-tools {
   display: flex;
   gap: 32rpx;
+}
+
+.send-btn {
+  min-width: 160rpx;
 }

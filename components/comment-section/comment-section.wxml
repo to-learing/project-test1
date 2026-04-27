@@ -118,20 +118,14 @@
     <view class="input-wrapper">
       <textarea class="comment-textarea" placeholder="{{replyTarget ? '回复 ' + replyTarget.userNickname + '...' : '留下你的想法吧...'}}" value="{{commentContent}}" bindinput="handleCommentInput" bindfocus="handleKeyboardShow" bindblur="handleKeyboardHide" focus="{{showCommentInput}}" auto-height maxlength="500" adjust-position="{{false}}" cursor-spacing="20" show-confirm-bar="{{false}}" />
     </view>
-    <view>
-      <t-row>
-        <t-col span="12">
-          <view class="popup-tools">
-            <t-icon name="smile" size="24px" color="#666" />
-            <t-icon name="image" size="24px" color="#666" />
-          </view>
-        </t-col>
-        <t-col span="6" offset="6">
-          <t-button class="send-btn" size="small" theme="primary" shape="round" disabled="{{isCommentEmpty}}" bindtap="handleSubmitComment">
-            发送
-          </t-button>
-        </t-col>
-      </t-row>
+    <view class="input-footer">
+      <view class="popup-tools">
+        <t-icon name="smile" size="24px" color="#666" />
+        <t-icon name="image" size="24px" color="#666" />
+      </view>
+      <t-button class="send-btn" size="small" theme="primary" shape="round" disabled="{{isCommentEmpty}}" bindtap="handleSubmitComment">
+        发送
+      </t-button>
     </view>
   </view>
 </view>
