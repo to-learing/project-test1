@@ -9,7 +9,8 @@
     "t-row": "tdesign-miniprogram/row/row",
     "t-col": "tdesign-miniprogram/col/col",
     "t-loading": "tdesign-miniprogram/loading/loading",
-    "t-tag": "tdesign-miniprogram/tag/tag"
+    "t-tag": "tdesign-miniprogram/tag/tag",
+    "comment-section": "/components/comment-section/comment-section"
   },
   "navigationBarTitleText": "话题详情"
 }
