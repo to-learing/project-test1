@@ -323,3 +323,102 @@
   display: flex;
   gap: 32rpx;
 }
+
+/* ========================================
+   操作菜单样式
+   ======================================== */
+.action-sheet-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
+.action-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background-color: var(--bg-secondary, #f5f5f5);
+  border-top-left-radius: 24rpx;
+  border-top-right-radius: 24rpx;
+  animation: slideUp 0.3s ease-out;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.action-sheet-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24rpx 0;
+  background-color: var(--bg-color-container, #fff);
+  border-bottom: 1rpx solid var(--component-stroke, #eee);
+}
+
+.action-sheet-title {
+  font-size: 26rpx;
+  color: var(--text-color-placeholder, #999);
+}
+
+.action-sheet-list {
+  background-color: var(--bg-color-container, #fff);
+  margin-top: 16rpx;
+}
+
+.action-sheet-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16rpx;
+  padding: 32rpx;
+  border-bottom: 1rpx solid var(--component-stroke, #eee);
+  background-color: var(--bg-color-container, #fff);
+}
+
+.action-sheet-item:last-child {
+  border-bottom: none;
+}
+
+.action-sheet-item:active {
+  background-color: var(--bg-secondary, #f5f5f5);
+}
+
+.action-sheet-item.danger .action-sheet-label {
+  color: #ff4d4f;
+}
+
+.action-sheet-label {
+  font-size: 32rpx;
+  color: var(--text-color-primary, #333);
+}
+
+.action-sheet-cancel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32rpx;
+  margin-top: 16rpx;
+  background-color: var(--bg-color-container, #fff);
+}
+
+.action-sheet-cancel:active {
+  background-color: var(--bg-secondary, #f5f5f5);
+}
+
+.action-sheet-cancel text {
+  font-size: 32rpx;
+  color: var(--text-color-primary, #333);
+}

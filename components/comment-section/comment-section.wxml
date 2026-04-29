@@ -29,11 +29,12 @@
       <!-- 评论者头像 -->
       <t-avatar class="current-user-avatar" image="{{item.userAvatar || '/images/default-avatar.png'}}" size="70rpx"></t-avatar>
       <!-- 评论内容区 -->
-      <view class="comment-main">
+      <view class="comment-main" data-comment="{{item}}" bindlongpress="handleLongPress">
         <!-- 评论者昵称 -->
         <view class="comment-user-info">
           <text class="comment-nickname">{{item.userNickname}}</text>
           <t-tag wx:if="{{item.isAuthor}}" theme="primary" size="small">作者</t-tag>
+          <t-tag wx:if="{{item.isTop}}" theme="danger" size="small" variant="light">置顶</t-tag>
         </view>
         <!-- 评论文本 -->
         <view class="comment-text">{{item.content}}</view>
@@ -54,7 +55,7 @@
           <view class="child-comments">
             <!-- 显示的子评论 -->
             <block wx:for="{{item.children}}" wx:for-item="child" wx:for-index="childIndex" wx:key="id">
-              <view wx:if="{{item.showAllChildren || childIndex === 0}}" class="child-comment-item">
+              <view wx:if="{{item.showAllChildren || childIndex === 0}}" class="child-comment-item" data-comment="{{child}}" data-parent="{{item}}" data-is-child="{{true}}" bindlongpress="handleLongPress">
                 <t-avatar class="current-user-avatar" image="{{child.userAvatar || '/images/default-avatar.png'}}" size="50rpx" />
                 <view class="child-content">
                   <view class="child-user-info">
@@ -133,5 +134,24 @@
         </t-col>
       </t-row>
     </view>
+  </view>
+</view>
+
+<!-- 操作菜单遮罩层 -->
+<view class="action-sheet-overlay" wx:if="{{showActionSheet}}" bindtap="handleHideActionSheet"></view>
+
+<!-- 操作菜单 -->
+<view class="action-sheet" wx:if="{{showActionSheet}}">
+  <view class="action-sheet-header">
+    <text class="action-sheet-title">操作</text>
+  </view>
+  <view class="action-sheet-list">
+    <view wx:for="{{actionOptions}}" wx:key="key" class="action-sheet-item {{item.danger ? 'danger' : ''}}" data-key="{{item.key}}" bindtap="handleActionTap">
+      <t-icon wx:if="{{item.icon}}" name="{{item.icon}}" size="36rpx" color="{{item.danger ? '#ff4d4f' : '#333'}}" />
+      <text class="action-sheet-label">{{item.label}}</text>
+    </view>
+  </view>
+  <view class="action-sheet-cancel" bindtap="handleHideActionSheet">
+    <text>取消</text>
   </view>
 </view>

@@ -1,57 +1,57 @@
+const app = getApp();
+
 Component({
   /**
    * 组件的属性列表
    */
   properties: {
-    // 评论列表
     comments: {
       type: Array,
       value: []
     },
-    // 评论数量
     commentCount: {
       type: Number,
       value: 0
     },
-    // 当前用户头像
     userAvatar: {
       type: String,
       value: ''
     },
-    // 是否正在加载评论
     loadingComments: {
       type: Boolean,
       value: false
     },
-    // 是否有更多评论
     commentHasMore: {
       type: Boolean,
       value: true
     },
-    // 是否显示评论输入框
     showCommentInput: {
       type: Boolean,
       value: false
     },
-    // 评论内容
     commentContent: {
       type: String,
       value: ''
     },
-    // 评论是否为空
     isCommentEmpty: {
       type: Boolean,
       value: true
     },
-    // 回复目标
     replyTarget: {
       type: Object,
       value: null
     },
-    // 键盘高度
     keyboardHeight: {
       type: Number,
       value: 0
+    },
+    currentUserId: {
+      type: Number,
+      value: null
+    },
+    authorUserId: {
+      type: Number,
+      value: null
     }
   },
 
@@ -59,7 +59,11 @@ Component({
    * 组件的初始数据
    */
   data: {
-
+    showActionSheet: false,
+    actionSheetComment: null,
+    actionSheetIsChild: false,
+    actionSheetParentComment: null,
+    actionOptions: []
   },
 
   /**
@@ -155,6 +159,190 @@ Component({
      */
     handleKeyboardHide: function() {
       this.triggerEvent('keyboardHide');
+    },
+
+    /**
+     * 长按评论显示操作菜单
+     */
+    handleLongPress: function(e) {
+      const comment = e.currentTarget.dataset.comment;
+      const isChild = e.currentTarget.dataset.isChild || false;
+      const parent = e.currentTarget.dataset.parent;
+      
+      if (!comment) return;
+      
+      this._showActionSheet(comment, isChild, parent);
+    },
+
+    /**
+     * 显示操作菜单
+     */
+    _showActionSheet: function(comment, isChild, parent) {
+      const currentUserId = this.properties.currentUserId;
+      const authorUserId = this.properties.authorUserId;
+      const commentUserId = comment.userId;
+      
+      const isOwnComment = currentUserId && currentUserId === commentUserId;
+      const isAuthor = authorUserId && currentUserId && currentUserId === authorUserId;
+      const isTopLevelComment = !isChild && (!comment.parentId || comment.parentId === 0);
+      
+      const options = [];
+      
+      options.push({
+        key: 'copy',
+        label: '复制内容',
+        icon: 'copy'
+      });
+      
+      if (isOwnComment) {
+        options.push({
+          key: 'delete',
+          label: '删除评论',
+          icon: 'delete',
+          danger: true
+        });
+      }
+      
+      if (!isOwnComment) {
+        options.push({
+          key: 'report',
+          label: '举报评论',
+          icon: 'error-circle'
+        });
+      }
+      
+      if (isAuthor) {
+        if (!isOwnComment) {
+          if (!options.find(opt => opt.key === 'delete')) {
+            options.push({
+              key: 'delete',
+              label: '删除评论',
+              icon: 'delete',
+              danger: true
+            });
+          }
+        }
+        
+        if (isTopLevelComment) {
+          const isAlreadyTop = comment.isTop === true;
+          options.push({
+            key: isAlreadyTop ? 'unTop' : 'top',
+            label: isAlreadyTop ? '取消置顶' : '置顶',
+            icon: 'top'
+          });
+        }
+      }
+      
+      this.setData({
+        showActionSheet: true,
+        actionSheetComment: comment,
+        actionSheetIsChild: isChild,
+        actionSheetParentComment: parent,
+        actionOptions: options
+      });
+    },
+
+    /**
+     * 隐藏操作菜单
+     */
+    handleHideActionSheet: function() {
+      this.setData({
+        showActionSheet: false,
+        actionSheetComment: null,
+        actionSheetIsChild: false,
+        actionSheetParentComment: null,
+        actionOptions: []
+      });
+    },
+
+    /**
+     * 点击操作菜单选项
+     */
+    handleActionTap: function(e) {
+      const key = e.currentTarget.dataset.key;
+      const comment = this.data.actionSheetComment;
+      const isChild = this.data.actionSheetIsChild;
+      const parent = this.data.actionSheetParentComment;
+      
+      this.handleHideActionSheet();
+      
+      switch (key) {
+        case 'copy':
+          this._handleCopy(comment);
+          break;
+        case 'delete':
+          this._handleDelete(comment, isChild, parent);
+          break;
+        case 'report':
+          this._handleReport(comment);
+          break;
+        case 'top':
+          this._handleTop(comment, true);
+          break;
+        case 'unTop':
+          this._handleTop(comment, false);
+          break;
+      }
+    },
+
+    /**
+     * 复制评论内容
+     */
+    _handleCopy: function(comment) {
+      if (!comment || !comment.content) {
+        wx.showToast({ title: '暂无内容可复制', icon: 'none' });
+        return;
+      }
+      
+      wx.setClipboardData({
+        data: comment.content,
+        success: function() {
+          wx.showToast({ title: '已复制', icon: 'success' });
+        },
+        fail: function() {
+          wx.showToast({ title: '复制失败', icon: 'none' });
+        }
+      });
+    },
+
+    /**
+     * 删除评论
+     */
+    _handleDelete: function(comment, isChild, parent) {
+      const that = this;
+      
+      wx.showModal({
+        title: '提示',
+        content: '确定删除该评论吗？',
+        confirmText: '删除',
+        confirmColor: '#ff4d4f',
+        success: function(res) {
+          if (res.confirm) {
+            that.triggerEvent('deleteComment', { 
+              comment: comment, 
+              isChild: isChild,
+              parent: parent
+            });
+          }
+        }
+      });
+    },
+
+    /**
+     * 举报评论
+     */
+    _handleReport: function(comment) {
+      this.triggerEvent('reportComment', { comment: comment });
+    },
+
+    /**
+     * 置顶/取消置顶评论
+     */
+    _handleTop: function(comment, isTop) {
+      this.triggerEvent('toggleTop', { 
+        comment: comment, 
+        isTop: isTop 
+      });
     }
   }
 });

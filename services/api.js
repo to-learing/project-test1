@@ -386,6 +386,36 @@ const comment = {
    */
   delete: function(id) {
     return http.delete(`/comments/${id}`);
+  },
+  
+  /**
+   * 置顶评论
+   * @param {Number} id 评论ID
+   * @returns {Promise}
+   */
+  top: function(id) {
+    return http.post(`/comments/${id}/top`, {}, { auth: true });
+  },
+  
+  /**
+   * 取消置顶评论
+   * @param {Number} id 评论ID
+   * @returns {Promise}
+   */
+  unTop: function(id) {
+    return http.delete(`/comments/${id}/top`, {}, { auth: true });
+  },
+  
+  /**
+   * 举报评论
+   * @param {Object} data 举报数据
+   * @param {Number} data.commentId 评论ID
+   * @param {Number} data.reasonType 举报原因类型 1-广告骚扰 2-色情低俗 3-暴力敏感 4-违法违规 5-其他
+   * @param {String} data.reason 举报原因（详细描述）
+   * @returns {Promise}
+   */
+  report: function(data) {
+    return http.post('/comments/report', data, { auth: true });
   }
 };
 

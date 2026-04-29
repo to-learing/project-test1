@@ -92,6 +92,8 @@
     is-comment-empty="{{isCommentEmpty}}"
     reply-target="{{replyTarget}}"
     keyboard-height="{{keyboardHeight}}"
+    current-user-id="{{currentUserId}}"
+    author-user-id="{{authorUserId}}"
     bind:toggleCommentSort="toggleCommentSort"
     bind:showCommentInput="showCommentInput"
     bind:loadMoreComments="loadMoreComments"
@@ -104,5 +106,8 @@
     bind:hideCommentInput="hideCommentInput"
     bind:keyboardShow="handleKeyboardShow"
     bind:keyboardHide="handleKeyboardHide"
+    bind:deleteComment="handleDeleteComment"
+    bind:reportComment="handleReportComment"
+    bind:toggleTop="handleToggleTop"
   ></comment-section>
 </view>
