@@ -386,6 +386,36 @@ const comment = {
    */
   delete: function(id) {
     return http.delete(`/comments/${id}`);
+  },
+  
+  /**
+   * 置顶评论
+   * @param {Number} id 评论ID
+   * @returns {Promise}
+   */
+  top: function(id) {
+    return http.post(`/comments/${id}/top`, {}, { auth: true });
+  },
+  
+  /**
+   * 取消置顶评论
+   * @param {Number} id 评论ID
+   * @returns {Promise}
+   */
+  unTop: function(id) {
+    return http.delete(`/comments/${id}/top`, {}, { auth: true });
+  },
+  
+  /**
+   * 举报评论
+   * @param {Object} data 举报数据
+   * @param {Number} data.commentId 评论ID
+   * @param {Number} data.reasonType 举报原因类型 1-广告骚扰 2-色情低俗 3-暴力敏感 4-违法违规 5-其他
+   * @param {String} data.reason 举报原因（详细描述）
+   * @returns {Promise}
+   */
+  report: function(data) {
+    return http.post('/comments/report', data, { auth: true });
   }
 };
 
@@ -554,6 +584,29 @@ const upload = {
    */
   image: function(filePath) {
     return http.uploadFile(filePath);
+  },
+  
+  /**
+   * 根据哈希值检查文件是否已存在
+   * @param {String} hash 文件MD5哈希值
+   * @returns {Promise} 返回 { exists, fileUrl, fileSize, uploadCount }
+   */
+  checkFile: function(hash) {
+    return http.get('/upload/check', { hash: hash }, { auth: true });
+  },
+  
+  /**
+   * 记录文件哈希映射
+   * @param {Object} data 记录数据
+   * @param {String} data.hash 文件哈希值
+   * @param {String} data.fileUrl 文件访问URL
+   * @param {Number} data.fileSize 文件大小
+   * @param {String} data.originalName 原始文件名
+   * @param {String} data.extension 文件扩展名
+   * @returns {Promise}
+   */
+  recordFileHash: function(data) {
+    return http.post('/upload/record', data, { auth: true });
   }
 };
 

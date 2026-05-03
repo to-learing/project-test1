@@ -11,50 +11,45 @@ Page({
     isFollowed: false,
     topicId: null,
     loading: false,
-    // 评论相关
     loadingComments: false,
     commentHasMore: true,
     commentPageNum: 1,
     commentPageSize: 10,
-    // 子评论分页
     childrenPageSize: 10,
     childrenPreviewLimit: 1,
-    // 评论输入
     commentContent: '',
     isCommentEmpty: true,
     showCommentInput: false,
     replyTarget: null,
     replyParent: null,
-    // 用户信息
     userAvatar: '',
-    // 键盘高度
-    keyboardHeight: 0
+    keyboardHeight: 0,
+    currentUserId: null,
+    authorUserId: null
   },
 
   onLoad(options) {
     const { id } = options;
     if (id) {
+      const currentUserId = app.globalData.userInfo?.id || null;
       this.setData({ 
         topicId: id,
-        userAvatar: app.globalData.userInfo?.avatar || ''
+        userAvatar: app.globalData.userInfo?.avatar || '',
+        currentUserId: currentUserId
       });
       this.loadTopicDetail(id);
       this.loadComments(true);
     }
   },
 
-  /**
-   * 页面显示时刷新用户头像
-   */
   onShow() {
+    const currentUserId = app.globalData.userInfo?.id || null;
     this.setData({
-      userAvatar: app.globalData.userInfo?.avatar || ''
+      userAvatar: app.globalData.userInfo?.avatar || '',
+      currentUserId: currentUserId
     });
   },
 
-  /**
-   * 加载话题详情
-   */
   loadTopicDetail(id) {
     this.setData({ loading: true });
     
@@ -86,11 +81,11 @@ Page({
         
         this.setData({
           topic: topic,
+          authorUserId: detail.userId,
           isLiked: detail.isLiked || false,
           isFavorite: detail.isFavorite || false
         });
         
-        // 检查是否已关注该作者
         if (detail.userId && !detail.isOwner) {
           this.checkFollowStatus(detail.userId);
         }
@@ -111,9 +106,6 @@ Page({
     });
   },
 
-  /**
-   * 检查关注状态
-   */
   checkFollowStatus(userId) {
     if (!app.globalData.isLoggedIn) return;
     
@@ -126,9 +118,6 @@ Page({
     });
   },
 
-  /**
-   * 切换关注状态
-   */
   toggleFollow() {
     const { topic, isFollowed } = this.data;
     
@@ -136,7 +125,6 @@ Page({
     
     if (!app.checkLogin()) return;
     
-    // 不能关注自己
     if (topic.isOwner) {
       wx.showToast({ title: '不能关注自己', icon: 'none' });
       return;
@@ -144,7 +132,6 @@ Page({
     
     const userId = topic.author.id;
     
-    // 如果已关注，显示确认弹窗
     if (isFollowed) {
       wx.showModal({
         title: '提示',
@@ -159,21 +146,15 @@ Page({
         }
       });
     } else {
-      // 直接关注
       this.doFollowAction(userId, true);
     }
   },
 
-  /**
-   * 执行关注/取消关注操作
-   */
   doFollowAction(userId, isFollow) {
-    // 保存当前状态用于回滚
     const previousStatus = this.data.isFollowed;
     
     console.log('[关注操作] 开始执行, userId:', userId, ', isFollow:', isFollow, ', previousStatus:', previousStatus);
     
-    // 乐观更新UI
     this.setData({ isFollowed: isFollow });
     
     const apiCall = isFollow 
@@ -183,7 +164,6 @@ Page({
     apiCall.then(res => {
       console.log('[关注操作] API返回:', res);
       if (res.code !== 200) {
-        // 回滚
         this.setData({ isFollowed: previousStatus });
         wx.showToast({ title: res.message || '操作失败', icon: 'none' });
       } else {
@@ -194,15 +174,11 @@ Page({
       }
     }).catch(err => {
       console.error('[关注操作] API错误:', err);
-      // 回滚
       this.setData({ isFollowed: previousStatus });
       wx.showToast({ title: '操作失败', icon: 'none' });
     });
   },
 
-  /**
-   * 加载评论列表
-   */
   loadComments(refresh = false) {
     if (refresh) {
       this.setData({
@@ -216,7 +192,7 @@ Page({
     this.setData({ loadingComments: true });
     
     api.comment.getList({
-      bizType: 2, // 话题
+      bizType: 2,
       bizId: this.data.topicId,
       pageNum: this.data.commentPageNum,
       pageSize: this.data.commentPageSize,
@@ -224,7 +200,6 @@ Page({
     }, { showLoading: false }).then(res => {
       if (res.code === 200 && res.data && res.data.records) {
         const newComments = res.data.records.map(item => {
-          // 优先使用后端返回的子评论总数
           const childrenCount = typeof item.childrenCount === 'number'
             ? item.childrenCount
             : (typeof item.replyCount === 'number' ? item.replyCount : (item.children || []).length);
@@ -268,16 +243,10 @@ Page({
     });
   },
 
-  /**
-   * 加载更多评论
-   */
   loadMoreComments() {
     this.loadComments(false);
   },
 
-  /**
-   * 展开子评论
-   */
   expandReplies(e) {
     const index = e.currentTarget.dataset.index;
     const comment = this.data.comments[index];
@@ -335,21 +304,18 @@ Page({
     const newStatus = !isLiked;
     const newCount = newStatus ? topic.likes + 1 : Math.max(0, topic.likes - 1);
     
-    // 乐观更新UI
     this.setData({
       isLiked: newStatus,
       'topic.likes': newCount,
       'topic.likesFormatted': util.formatNumberShort(newCount)
     });
     
-    // 调用API
     const apiCall = newStatus 
       ? api.like.likeTopic(topicId) 
       : api.like.unlikeTopic(topicId);
     
     apiCall.then(res => {
       if (res.code !== 200) {
-        // 回滚
         this.setData({
           isLiked: isLiked,
           'topic.likes': topic.likes,
@@ -367,7 +333,6 @@ Page({
       }
     }).catch(err => {
       console.error('点赞失败:', err);
-      // 回滚
       this.setData({
         isLiked: isLiked,
         'topic.likes': topic.likes,
@@ -380,22 +345,15 @@ Page({
     });
   },
 
-  /**
-   * 收藏/取消收藏
-   */
   onFavorite() {
     if (!app.checkLogin()) return;
     
-    // TODO: 实现收藏功能
     wx.showToast({
       title: '收藏功能开发中',
       icon: 'none'
     });
   },
 
-  /**
-   * 评论点赞
-   */
   onCommentLike(e) {
     if (!app.checkLogin()) return;
     
@@ -413,9 +371,6 @@ Page({
     });
   },
 
-  /**
-   * 更新评论点赞状态
-   */
   updateCommentLikeStatus(commentId, isLiked) {
     const comments = this.data.comments.map(item => {
       if (item.id === commentId) {
@@ -426,7 +381,6 @@ Page({
           likeCountFormatted: util.formatNumberShort(isLiked ? item.likeCount + 1 : item.likeCount - 1)
         };
       }
-      // 检查子评论
       if (item.children && item.children.length > 0) {
         item.children = item.children.map(child => {
           if (child.id === commentId) {
@@ -446,9 +400,6 @@ Page({
     this.setData({ comments });
   },
 
-  /**
-   * 显示评论输入框
-   */
   showCommentInput() {
     if (!app.checkLogin()) return;
     
@@ -460,9 +411,6 @@ Page({
     });
   },
 
-  /**
-   * 回复一级评论
-   */
   onReply(e) {
     if (!app.checkLogin()) return;
     
@@ -475,9 +423,6 @@ Page({
     });
   },
 
-  /**
-   * 回复子评论
-   */
   onReplyChild(e) {
     if (!app.checkLogin()) return;
     
@@ -507,12 +452,11 @@ Page({
     }
 
     const data = {
-      bizType: 2, // 话题
+      bizType: 2,
       bizId: this.data.topicId,
       content: content
     };
 
-    // 如果是回复
     if (this.data.replyTarget && this.data.replyParent) {
       data.parentId = this.data.replyParent.id;
       data.replyUserId = this.data.replyTarget.userId;
@@ -527,10 +471,8 @@ Page({
         
         this.hideCommentInput();
         
-        // 刷新评论列表
         this.loadComments(true);
         
-        // 更新评论数
         const newCount = this.data.topic.comments + 1;
         this.setData({
           'topic.comments': newCount,
@@ -551,9 +493,6 @@ Page({
     });
   },
 
-  /**
-   * 隐藏评论输入框
-   */
   hideCommentInput() {
     this.setData({
       showCommentInput: false,
@@ -565,28 +504,292 @@ Page({
     });
   },
 
-  /**
-   * 键盘弹起
-   */
   onKeyboardShow(e) {
     const keyboardHeight = e.detail.height || 0;
     this.setData({ keyboardHeight });
   },
 
-  /**
-   * 键盘收起
-   */
   onKeyboardHide() {
     this.setData({ keyboardHeight: 0 });
   },
 
-  /**
-   * 切换评论排序
-   */
   toggleCommentSort() {
     wx.showToast({
       title: '排序功能开发中',
       icon: 'none'
     });
+  },
+
+  handleExpandReplies(e) {
+    const { index } = e.detail;
+    const comment = this.data.comments[index];
+    if (!comment || comment.loadingChildren || !comment.childrenHasMore) return;
+
+    const loadingKey = `comments[${index}].loadingChildren`;
+    const showKey = `comments[${index}].showAllChildren`;
+    this.setData({
+      [loadingKey]: true,
+      [showKey]: true
+    });
+
+    api.comment.getChildren({
+      parentId: comment.id,
+      pageNum: comment.childrenPageNum,
+      pageSize: this.data.childrenPageSize
+    }).then(res => {
+      if (res.code === 200) {
+        const newChildren = res.data.records.map(child => ({
+          ...child,
+          createTimeFormatted: util.formatRelativeTime(child.createTime),
+          likeCountFormatted: util.formatNumberShort(child.likeCount)
+        }));
+
+        const existing = comment.children || [];
+        const mergedMap = new Map();
+        existing.forEach(item => mergedMap.set(item.id, item));
+        newChildren.forEach(item => mergedMap.set(item.id, item));
+        const merged = Array.from(mergedMap.values());
+
+        const total = typeof res.data.total === 'number'
+          ? res.data.total
+          : (comment.childrenCount || merged.length);
+
+        const baseKey = `comments[${index}]`;
+        this.setData({
+          [`${baseKey}.children`]: merged,
+          [`${baseKey}.childrenCount`]: total,
+          [`${baseKey}.childrenPageNum`]: comment.childrenPageNum + 1,
+          [`${baseKey}.childrenHasMore`]: merged.length < total,
+          [`${baseKey}.loadingChildren`]: false
+        });
+      }
+    }).catch(() => {
+      this.setData({
+        [loadingKey]: false
+      });
+    });
+  },
+
+  handleReply(e) {
+    const { comment } = e.detail;
+    if (!app.checkLogin()) return;
+    
+    this.setData({
+      showCommentInput: true,
+      replyTarget: comment,
+      replyParent: comment,
+      isCommentEmpty: !(this.data.commentContent || '').trim()
+    });
+  },
+
+  handleReplyChild(e) {
+    const { comment, parent } = e.detail;
+    if (!app.checkLogin()) return;
+    
+    this.setData({
+      showCommentInput: true,
+      replyTarget: comment,
+      replyParent: parent,
+      isCommentEmpty: !(this.data.commentContent || '').trim()
+    });
+  },
+
+  handleCommentLike(e) {
+    const { comment } = e.detail;
+    if (!app.checkLogin()) return;
+    
+    const isLiked = comment.isLiked;
+    const action = isLiked 
+      ? api.like.unlikeComment(comment.id) 
+      : api.like.likeComment(comment.id);
+    
+    action.then(res => {
+      if (res.code === 200) {
+        this.updateCommentLikeStatus(comment.id, !isLiked);
+      }
+    });
+  },
+
+  handleCommentInput(e) {
+    const { value } = e.detail;
+    this.setData({
+      commentContent: value,
+      isCommentEmpty: !value.trim()
+    });
+  },
+
+  handleKeyboardShow(e) {
+    const { keyboardHeight } = e.detail;
+    this.setData({ keyboardHeight });
+  },
+
+  handleKeyboardHide() {
+    this.setData({ keyboardHeight: 0 });
+  },
+
+  handleDeleteComment(e) {
+    const { comment, isChild, parent } = e.detail;
+    
+    if (!app.checkLogin()) return;
+    if (!comment || !comment.id) return;
+    
+    wx.showLoading({ title: '删除中...' });
+    
+    api.comment.delete(comment.id).then(res => {
+      wx.hideLoading();
+      
+      if (res.code === 200) {
+        this._removeCommentFromList(comment.id, isChild, parent);
+        
+        wx.showToast({
+          title: '删除成功',
+          icon: 'success'
+        });
+        
+        const newCount = Math.max(0, this.data.topic.comments - 1);
+        this.setData({
+          'topic.comments': newCount,
+          'topic.commentsFormatted': util.formatNumberShort(newCount)
+        });
+      } else {
+        wx.showToast({
+          title: res.message || '删除失败',
+          icon: 'none'
+        });
+      }
+    }).catch(err => {
+      wx.hideLoading();
+      console.error('删除评论失败:', err);
+      wx.showToast({
+        title: '网络错误',
+        icon: 'none'
+      });
+    });
+  },
+
+  _removeCommentFromList(commentId, isChild, parent) {
+    let comments = [...this.data.comments];
+    
+    if (isChild && parent) {
+      comments = comments.map(item => {
+        if (item.id === parent.id && item.children) {
+          return {
+            ...item,
+            children: item.children.filter(child => child.id !== commentId),
+            childrenCount: Math.max(0, (item.childrenCount || 0) - 1)
+          };
+        }
+        return item;
+      });
+    } else {
+      comments = comments.filter(item => item.id !== commentId);
+    }
+    
+    this.setData({ comments });
+  },
+
+  handleReportComment(e) {
+    const { comment } = e.detail;
+    
+    if (!app.checkLogin()) return;
+    if (!comment || !comment.id) return;
+    
+    const that = this;
+    
+    wx.showActionSheet({
+      itemList: ['广告骚扰', '色情低俗', '暴力敏感', '违法违规', '其他'],
+      success: function(res) {
+        const reasonType = res.tapIndex + 1;
+        const reasonLabels = ['广告骚扰', '色情低俗', '暴力敏感', '违法违规', '其他'];
+        const reason = reasonLabels[res.tapIndex];
+        
+        wx.showLoading({ title: '提交中...' });
+        
+        api.comment.report({
+          commentId: comment.id,
+          reasonType: reasonType,
+          reason: reason
+        }).then(res => {
+          wx.hideLoading();
+          
+          if (res.code === 200) {
+            wx.showToast({
+              title: '举报成功',
+              icon: 'success'
+            });
+          } else {
+            wx.showToast({
+              title: res.message || '举报失败',
+              icon: 'none'
+            });
+          }
+        }).catch(err => {
+          wx.hideLoading();
+          console.error('举报评论失败:', err);
+          wx.showToast({
+            title: '网络错误',
+            icon: 'none'
+          });
+        });
+      }
+    });
+  },
+
+  handleToggleTop(e) {
+    const { comment, isTop } = e.detail;
+    
+    if (!app.checkLogin()) return;
+    if (!comment || !comment.id) return;
+    
+    wx.showLoading({ title: isTop ? '置顶中...' : '取消置顶中...' });
+    
+    const apiCall = isTop 
+      ? api.comment.top(comment.id)
+      : api.comment.unTop(comment.id);
+    
+    apiCall.then(res => {
+      wx.hideLoading();
+      
+      if (res.code === 200) {
+        this._updateCommentTopStatus(comment.id, isTop);
+        
+        wx.showToast({
+          title: isTop ? '置顶成功' : '已取消置顶',
+          icon: 'success'
+        });
+      } else {
+        wx.showToast({
+          title: res.message || '操作失败',
+          icon: 'none'
+        });
+      }
+    }).catch(err => {
+      wx.hideLoading();
+      console.error('置顶评论失败:', err);
+      wx.showToast({
+        title: '网络错误',
+        icon: 'none'
+      });
+    });
+  },
+
+  _updateCommentTopStatus(commentId, isTop) {
+    const comments = this.data.comments.map(item => {
+      if (item.id === commentId) {
+        return {
+          ...item,
+          isTop: isTop
+        };
+      }
+      return item;
+    });
+    
+    comments.sort((a, b) => {
+      if (a.isTop && !b.isTop) return -1;
+      if (!a.isTop && b.isTop) return 1;
+      return 0;
+    });
+    
+    this.setData({ comments });
   }
 });
