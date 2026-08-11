@@ -552,5 +552,133 @@ Page({
       path: `/pages/article/detail/detail?id=${this.data.articleId}`,
       imageUrl: article ? article.coverImage : ''
     };
+  },
+
+  /**
+   * 处理组件展开子评论事件
+   */
+  handleExpandReplies: function(e) {
+    const { index } = e.detail;
+    const comment = this.data.comments[index];
+    if (!comment || comment.loadingChildren || !comment.childrenHasMore) return;
+
+    const loadingKey = `comments[${index}].loadingChildren`;
+    const showKey = `comments[${index}].showAllChildren`;
+    this.setData({
+      [loadingKey]: true,
+      [showKey]: true
+    });
+
+    api.comment.getChildren({
+      parentId: comment.id,
+      pageNum: comment.childrenPageNum,
+      pageSize: this.data.childrenPageSize
+    }).then(res => {
+      if (res.code === 200) {
+        const newChildren = res.data.records.map(child => ({
+          ...child,
+          createTimeFormatted: util.formatRelativeTime(child.createTime),
+          likeCountFormatted: util.formatNumberShort(child.likeCount)
+        }));
+
+        const existing = comment.children || [];
+        const mergedMap = new Map();
+        existing.forEach(item => mergedMap.set(item.id, item));
+        newChildren.forEach(item => mergedMap.set(item.id, item));
+        const merged = Array.from(mergedMap.values());
+
+        const total = typeof res.data.total === 'number'
+          ? res.data.total
+          : (comment.childrenCount || merged.length);
+
+        const baseKey = `comments[${index}]`;
+        this.setData({
+          [`${baseKey}.children`]: merged,
+          [`${baseKey}.childrenCount`]: total,
+          [`${baseKey}.childrenPageNum`]: comment.childrenPageNum + 1,
+          [`${baseKey}.childrenHasMore`]: merged.length < total,
+          [`${baseKey}.loadingChildren`]: false
+        });
+      }
+    }).catch(() => {
+      this.setData({
+        [loadingKey]: false
+      });
+    });
+  },
+
+  /**
+   * 处理组件回复一级评论事件
+   */
+  handleReply: function(e) {
+    const { comment } = e.detail;
+    if (!app.checkLogin()) return;
+    
+    this.setData({
+      showCommentInput: true,
+      replyTarget: comment,
+      replyParent: comment,
+      isCommentEmpty: !(this.data.commentContent || '').trim()
+    });
+  },
+
+  /**
+   * 处理组件回复子评论事件
+   */
+  handleReplyChild: function(e) {
+    const { comment, parent } = e.detail;
+    if (!app.checkLogin()) return;
+    
+    this.setData({
+      showCommentInput: true,
+      replyTarget: comment,
+      replyParent: parent,
+      isCommentEmpty: !(this.data.commentContent || '').trim()
+    });
+  },
+
+  /**
+   * 处理组件评论点赞事件
+   */
+  handleCommentLike: function(e) {
+    const { comment } = e.detail;
+    if (!app.checkLogin()) return;
+    
+    const isLiked = comment.isLiked;
+    const action = isLiked 
+      ? api.like.unlikeComment(comment.id) 
+      : api.like.likeComment(comment.id);
+    
+    action.then(res => {
+      if (res.code === 200) {
+        this.updateCommentLikeStatus(comment.id, !isLiked);
+      }
+    });
+  },
+
+  /**
+   * 处理组件评论输入事件
+   */
+  handleCommentInput: function(e) {
+    const { value } = e.detail;
+    this.setData({
+      commentContent: value,
+      isCommentEmpty: !value.trim()
+    });
+  },
+
+  /**
+   * 处理组件键盘显示事件
+   */
+  handleKeyboardShow: function(e) {
+    const { keyboardHeight } = e.detail;
+    this.setData({ keyboardHeight });
+  },
+
+  /**
+   * 处理组件键盘隐藏事件
+   */
+  handleKeyboardHide: function() {
+    this.setData({ keyboardHeight: 0 });
   }
 });
